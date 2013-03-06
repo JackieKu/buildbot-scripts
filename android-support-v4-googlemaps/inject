@@ -1,0 +1,9 @@
+#! /bin/sh
+o="$WORKSPACE/libs/android-support-v4.jar"
+if ! [ -e "$o" ] ; then
+	echo "ERROR: $o does not exist." 1>&2
+	exit 1
+fi
+exec cp -f \
+	"/usr/local/lib/jenkins/helpers/android-support-v4-googlemaps/android-support-v4-r11-googlemaps.jar" \
+	"$WORKSPACE/libs/android-support-v4.jar"

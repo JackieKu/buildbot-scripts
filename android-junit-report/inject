@@ -1,0 +1,18 @@
+#! /bin/sh
+
+D="/usr/local/lib/jenkins/helpers/android-junit-report"
+
+cd "${WORKSPACE:-/dev/null}" || exit 1
+
+mkdir tests/libs
+cp -f "$D/android-junit-report-1.5.8.jar" tests/libs/android-junit-report.jar
+cp -f "$D/custom_rules.xml" tests
+sed -i 's/android\.test\.InstrumentationTestRunner/com.zutubi.android.junitreport.JUnitReportTestRunner/g' \
+	tests/AndroidManifest.xml
+echo 'test.runner=com.zutubi.android.junitreport.JUnitReportTestRunner' >>tests/local.properties
+
+#ant -f tests/build.xml emma debug install test
+#r=$?
+#package="`xmllint --xpath '/*/@*[name()="package"]' AndroidManifest.xml | sed 's/.*package="//g; s/"$//g'`"
+#adb pull "/data/data/$package/files/junit-report.xml" bin/junit-report.xml
+#exit $r

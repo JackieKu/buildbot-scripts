@@ -1,0 +1,21 @@
+#! /bin/sh
+
+case "$TARGET" in
+	Intel*)
+		echo 'ABI=x86'
+	;;
+	android-*)
+		if [ "${TARGET#android-}" -le 14 ] ; then
+			echo 'ABI=armeabi'
+		else
+			echo 'ABI=x86'
+		fi
+	;;
+	'Google Inc.:Google APIs:'*)
+		if [ "${TARGET##*:}" -le 10 ] ; then
+			echo 'ABI=armeabi'
+		else
+			echo 'ABI=armeabi-v7a'
+		fi
+	;;
+esac

@@ -1,0 +1,41 @@
+#! /bin/bash
+
+T="${TARGET:-"$1"}"
+
+if [ -z "$T" ] ; then
+	echo '$TARGET and $1 is not set' 1>&2
+	exit 1
+fi
+
+arch="${T%%-*}"
+T="${T#*-}"
+platform="${T%%-*}"
+
+locale=zh_TW
+case "$arch" in
+	arm)
+		if [ "$platform" -gt 10 ] ; then
+			abi="armeabi-v7a"
+		else
+			abi="armeabi"
+		fi
+		target="Google Inc.:Google APIs:$platform"
+	;;
+	x86)
+		abi="x86"
+		if [ "$platform" -gt 10 ] ; then
+			target="android-$platform"
+		else
+			target="Intel Corporation:Intel Atom x86 System Image:$platform"
+		fi
+	;;
+esac
+
+# zh_TW (pinyin input method) is broken in platform-15 (arm and x86)
+[ "$platform" -eq 15 ] && locale=en_US
+
+cat <<_EOT_
+BUILD_ANDROID_TARGET=$target
+BUILD_ANDROID_ABI=$abi
+BUILD_ANDROID_LOCALE=$locale
+_EOT_

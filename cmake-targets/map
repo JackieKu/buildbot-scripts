@@ -1,0 +1,24 @@
+#! /bin/sh
+
+T="${label:-"$1"}"
+
+if [ -z "$T" ] ; then
+	echo '$TARGET and $1 is not set' 1>&2
+	exit 1
+fi
+
+_cmake() {
+	echo "CMAKE_EXECUTABLE=/usr/local/bin/cmake-$T"
+}
+
+case "$T" in
+	mingw*)
+		wineserver -p
+		_cmake
+	;;
+	qt5|clang)
+		_cmake
+	;;
+	vs2012)
+	;;
+esac
