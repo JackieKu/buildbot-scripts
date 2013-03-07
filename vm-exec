@@ -1,0 +1,6 @@
+#! /bin/bash
+
+. /home/jackie/bin/vm-functions.sh
+VM_EXEC_OPTS="--wait-stdout --wait-stderr"
+#echo vm_exec "$@"
+vm_exec "$@"

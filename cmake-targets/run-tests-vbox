@@ -1,0 +1,43 @@
+#! /bin/sh
+
+_s() {
+	sed -r -e 's#/usr/local/lib(64)?/jenkins#T:#g' "$@"
+}
+
+_S() {
+	_s "$@" -e 's#/#\\#g'
+}
+
+set -e
+
+cd build
+
+D="/usr/local/lib/jenkins/helpers"
+f="$WORKSPACE/build/run-tests.cmd"
+F="`echo -n "$f" | _S`"
+
+(
+IFS='
+'
+_s -i `find -name CTestTestfile.cmake`
+)
+
+P='E:\software\_dev_\cmake\bin'
+cat >"$f" <<_EOT_
+pushd "%~dp0"
+set PATH=$P;%PATH%
+ctest -j 2
+_EOT_
+unix2dos "$f"
+
+outdirs='test-reports Testing'
+rm -rf $outdirs || true
+mkdir $outdirs
+chmod 777 $outdirs
+set +e
+sudo -n -u jackie "$D/vm-exec" Win8 cmd.exe /c "$F"
+rv=$?
+chmod 755 $outdirs
+sudo -n "$D/cmake-targets/fix-tests-perms"
+
+exit $rv

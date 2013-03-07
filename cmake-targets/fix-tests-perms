@@ -1,0 +1,9 @@
+#! /bin/sh
+
+cd "`readlink -e .`"
+if [ "${PWD#/usr/local/lib64/jenkins/data/jobs/}" == "$PWD" ] ; then
+	echo "$0: $PWD is not right" 1>&2
+	exit 1
+fi
+
+chown -R tomcat:tomcat test-reports Testing
