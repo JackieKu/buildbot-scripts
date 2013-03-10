@@ -13,7 +13,6 @@ _cmake() {
 
 case "$T" in
 	mingw*)
-		wineserver -p
 		_cmake
 	;;
 	qt5|clang)
