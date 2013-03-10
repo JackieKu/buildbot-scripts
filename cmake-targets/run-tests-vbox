@@ -22,10 +22,10 @@ IFS='
 _s -i `find -name CTestTestfile.cmake`
 )
 
-P='E:\software\_dev_\cmake\bin'
+V='E:\software\_util_\KuUtils\vars.cmd'
 cat >"$f" <<_EOT_
+call $V
 pushd "%~dp0"
-set PATH=$P;%PATH%
 ctest -j 2
 _EOT_
 unix2dos "$f"
