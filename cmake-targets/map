@@ -3,7 +3,7 @@
 T="${label:-"$1"}"
 
 if [ -z "$T" ] ; then
-	echo '$TARGET and $1 is not set' 1>&2
+	echo '$label and $1 is not set' 1>&2
 	exit 1
 fi
 
