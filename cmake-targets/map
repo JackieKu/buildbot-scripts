@@ -19,5 +19,17 @@ case "$T" in
 		_cmake
 	;;
 	vs2012)
+		G="Visual Studio 11"
+		case "$TARGET" in
+			x86) : ;;
+			x64)
+				G="$G Win64"
+			;;
+			*)
+				echo "Unknown target $TARGET" 1>&2
+				exit 1
+			;;
+		esac
+		echo "CMAKE_GENERATOR=$G"
 	;;
 esac
