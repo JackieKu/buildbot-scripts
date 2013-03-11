@@ -11,12 +11,20 @@ _cmake() {
 	echo "CMAKE_EXECUTABLE=/usr/local/bin/cmake-$T"
 }
 
+_gmake() {
+	echo "CMAKE_BUILDER_OPTIONS=-j8"
+}
+
+echo "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE:-$Configuration}"
+
 case "$T" in
 	mingw*)
 		_cmake
+		_gmake
 	;;
 	qt5|clang)
 		_cmake
+		_gmake
 	;;
 	vs2012)
 		G="Visual Studio 11"
@@ -31,6 +39,8 @@ case "$T" in
 			;;
 		esac
 		echo "CMAKE_GENERATOR=$G"
+		# CMake does not use MSBuild, it uses devenv instead.
+		#echo "CMAKE_BUILDER_OPTIONS=/m"
 	;;
 	borland)
 		echo "CMAKE_GENERATOR=Borland Makefiles"
