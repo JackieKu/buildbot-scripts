@@ -32,4 +32,7 @@ case "$T" in
 		esac
 		echo "CMAKE_GENERATOR=$G"
 	;;
+	borland)
+		echo "CMAKE_GENERATOR=Borland Makefiles"
+	;;
 esac
