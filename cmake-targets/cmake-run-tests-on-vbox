@@ -10,8 +10,6 @@ _S() {
 
 set -e
 
-cd build
-
 D="/usr/local/lib/jenkins/helpers"
 f="$WORKSPACE/build/run-tests.cmd"
 F="`echo -n "$f" | _S`"

@@ -16,6 +16,19 @@ _gmake() {
 	[ "$G" != 'MinGW Makefiles' ] || echo "CMAKE_MAKE_PROGRAM=mingw32-make"
 }
 
+_get_target() {
+	[ -z "$TARGET" ] || return 0
+	case "$label" in
+		*-x86|*-w32)
+			TARGET=x86
+		;;
+		*-x64|*-w64)
+			TARGET=x64
+		;;
+	esac
+	[ -z "$TARGET" ] || echo "TARGET=$TARGET"
+}
+
 if [ -z "${Configuration:-$CONFIGURATION}" ] ; then
 	Configuration=Release
 	echo "Configuration=$Configuration"
@@ -43,10 +56,11 @@ case "$T" in
 	qt*-msvc)
 		G="Visual Studio 11"
 	;;
-	vs2012)
+	vs2012*)
 		G="Visual Studio 11"
+		_get_target
 		case "$TARGET" in
-			x86) : ;;
+			x86|'') : ;;
 			x64)
 				G="$G Win64"
 			;;

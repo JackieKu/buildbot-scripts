@@ -13,7 +13,7 @@ goto loop
 exit /b
 
 :gen
-	cmake -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE="%Configuration%" ..
+	cmake -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE="%Configuration%" %CMAKE_OPTS% ..
 	exit /b
 
 :build
