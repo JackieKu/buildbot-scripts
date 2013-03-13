@@ -13,17 +13,31 @@ _cmake() {
 
 _gmake() {
 	echo "CMAKE_BUILDER_OPTIONS=-j8"
+	[ "$G" != 'MinGW Makefiles' ] || echo "MAKE_PROGRAM=mingw32-make"
 }
 
+if [ -z "${Configuration:-$CONFIGURATION}" ] ; then
+	Configuration=Release
+	echo "Configuration=$Configuration"
+fi
 echo "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE:-$Configuration}"
 
+G=
 case "$T" in
 	mingw*)
 		_cmake
 		_gmake
 	;;
-	qt5|clang)
+	qt4-linux)
+		_gmake
+	;;
+	qt5-linux)
+		T="${T%-linux}"
 		_cmake
+		_gmake
+	;;
+	qt?-mingw)
+		G="MinGW Makefiles"
 		_gmake
 	;;
 	vs2012)
@@ -38,11 +52,12 @@ case "$T" in
 				exit 1
 			;;
 		esac
-		echo "CMAKE_GENERATOR=$G"
 		# CMake does not use MSBuild, it uses devenv instead.
 		#echo "CMAKE_BUILDER_OPTIONS=/m"
 	;;
 	borland)
-		echo "CMAKE_GENERATOR=Borland Makefiles"
+		G="Borland Makefiles"
 	;;
 esac
+
+[ -z "$G" ] || echo "CMAKE_GENERATOR=$G"

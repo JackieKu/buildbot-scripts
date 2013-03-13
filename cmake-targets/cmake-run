@@ -1,0 +1,43 @@
+#! /bin/sh
+
+: ${CMAKE:=${CMAKE_EXECUTABLE:=cmake}}
+: ${CMAKE_BUILD_TYPE:=Release}
+
+__gen() {
+	if [ "$CMAKE_GENERATOR" ] ; then
+		$CMAKE -G "$CMAKE_GENERATOR" "$@"
+	else
+		$CMAKE "$@"
+	fi
+}
+
+_gen() {
+	__gen -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE" $CMAKE_OPTS ..
+}
+
+_build() {
+	$CMAKE --build "$PWD" --config "$CMAKE_BUILD_TYPE" -- $CMAKE_BUILDER_OPTIONS
+}
+
+_test() {
+	if ctest -C "$CMAKE_BUILD_TYPE" -j 2 ; then
+		echo '0:OK' >TEST_RESULT
+		rm -f TEST_FAILED
+	else
+		echo "$?:FAILED" >TEST_RESULT
+		touch TEST_FAILED
+	fi
+	return 0
+}
+
+_pack() {
+	cpack -C "$CMAKE_BUILD_TYPE"
+}
+
+set -e
+
+[ -d build ] || mkdir build
+cd build
+for action ; do
+	_$action
+done
