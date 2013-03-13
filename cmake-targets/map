@@ -13,7 +13,7 @@ _cmake() {
 
 _gmake() {
 	echo "CMAKE_BUILDER_OPTIONS=-j8"
-	[ "$G" != 'MinGW Makefiles' ] || echo "MAKE_PROGRAM=mingw32-make"
+	[ "$G" != 'MinGW Makefiles' ] || echo "CMAKE_MAKE_PROGRAM=mingw32-make"
 }
 
 if [ -z "${Configuration:-$CONFIGURATION}" ] ; then
@@ -36,9 +36,12 @@ case "$T" in
 		_cmake
 		_gmake
 	;;
-	qt?-mingw)
+	qt*-mingw)
 		G="MinGW Makefiles"
 		_gmake
+	;;
+	qt*-msvc)
+		G="Visual Studio 11"
 	;;
 	vs2012)
 		G="Visual Studio 11"

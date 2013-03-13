@@ -22,7 +22,12 @@ exit /b
 
 :test
 	ctest -C "%Configuration%" -j 2
-	exit /b
+	if ERRORLEVEL 1 (
+		echo %ERRORLEVEL%:FAILED>TEST_RESULT
+	) else (
+		echo 0:OK>TEST_RESULT
+	)
+	exit /b 0
 
 :pack
 	cpack -C "%Configuration%"

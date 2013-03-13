@@ -18,6 +18,14 @@ popd
 	exit /b
 
 :SetEnv
+	if "%label%"=="qt5-mingw" (
+		set _env_set=qt-mingw
+		exit /b
+	)
+	if "%label%"=="qt5-msvc" (
+		set _env_set=qt-msvc
+		exit /b
+	)
 	if "%CMAKE_GENERATOR%"=="Borland Makefiles" (
 		set _env_set=borland
 		exit /b

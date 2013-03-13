@@ -3,11 +3,27 @@
 : ${CMAKE:=${CMAKE_EXECUTABLE:=cmake}}
 : ${CMAKE_BUILD_TYPE:=Release}
 
+case "`uname -s`" in
+	MINGW*)
+		_PATH="`echo "$PATH" | sed 's#:/bin:##g'`"
+		PATH="$_PATH" cmd.exe /c "$B_CMAKE_RUN.cmd $*"
+		exit
+	;;
+esac
+
+_e() {
+	if [ "$_PATH" ] ; then
+		PATH="_$PATH" "$@"
+	else
+		"$@"
+	fi
+}
+
 __gen() {
 	if [ "$CMAKE_GENERATOR" ] ; then
-		$CMAKE -G "$CMAKE_GENERATOR" "$@"
+		_e $CMAKE -G "$CMAKE_GENERATOR" "$@"
 	else
-		$CMAKE "$@"
+		_e $CMAKE "$@"
 	fi
 }
 
@@ -16,11 +32,11 @@ _gen() {
 }
 
 _build() {
-	$CMAKE --build "$PWD" --config "$CMAKE_BUILD_TYPE" -- $CMAKE_BUILDER_OPTIONS
+	_e $CMAKE --build "$PWD" --config "$CMAKE_BUILD_TYPE" -- $CMAKE_BUILDER_OPTIONS
 }
 
 _test() {
-	if ctest -C "$CMAKE_BUILD_TYPE" -j 2 ; then
+	if _e ctest -C "$CMAKE_BUILD_TYPE" -j 2 ; then
 		echo '0:OK' >TEST_RESULT
 		rm -f TEST_FAILED
 	else
@@ -31,7 +47,7 @@ _test() {
 }
 
 _pack() {
-	cpack -C "$CMAKE_BUILD_TYPE"
+	_e cpack -C "$CMAKE_BUILD_TYPE"
 }
 
 set -e
