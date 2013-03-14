@@ -18,7 +18,7 @@ _gmake() {
 
 _get_target() {
 	[ -z "$TARGET" ] || return 0
-	case "$label" in
+	case "$T" in
 		*-x86|*-w32)
 			TARGET=x86
 		;;
