@@ -1,6 +1,6 @@
 #! /bin/sh
 
-T="${label:-"${LABEL:-"$1"}"}"
+T="${label:="${LABEL:="$1"}"}"
 
 if [ -z "$T" ] ; then
 	echo '$label and $1 is not set' 1>&2
