@@ -24,7 +24,7 @@ V='E:\software\_util_\KuUtils\vars.cmd'
 cat >"$f" <<_EOT_
 call $V
 pushd "%~dp0"
-ctest -j 2
+ctest $*
 _EOT_
 unix2dos "$f"
 
