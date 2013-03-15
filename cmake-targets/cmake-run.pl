@@ -94,7 +94,9 @@ my $CMAKE_BUILD_TYPE = $ENV{CMAKE_BUILD_TYPE} || $ENV{Configuration} || 'Release
 
 for my $_ (@ARGV) {
 	when ('gen') {
-		run0($CMAKE, '-G', $ENV{CMAKE_GENERATOR}, "-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE", shellwords($ENV{CMAKE_OPTS}), '..');
+		my @args;
+		push (@args, '-G', $ENV{CMAKE_GENERATOR}) if ($ENV{CMAKE_GENERATOR});
+		run0($CMAKE, @args, "-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE", shellwords($ENV{CMAKE_OPTS}), '..');
 	}
 	when ('build') {
 		run0('cmake', '--build', cwd(), '--config', $CMAKE_BUILD_TYPE, '--', shellwords($ENV{CMAKE_BUILDER_OPTIONS}));
