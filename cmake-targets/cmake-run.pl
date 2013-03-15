@@ -8,6 +8,7 @@ use File::Spec;
 use Text::ParseWords;
 
 my $KUUTILS_DIR = $ENV{KUUTILS_DIR} || 'E:\software\_util_\KuUtils';
+my $T = $ENV{label};
 
 sub D
 {
@@ -43,9 +44,12 @@ sub cmd_env_profiles
 
 sub cmd_env_for_target
 {
-	given ($ENV{label}) {
+	given ($T) {
 		when ('borland') {
-			cmd_env_profiles($ENV{label});
+			cmd_env_profiles($T);
+		}
+		when (/qt5?-(mingw|msvc)/) {
+			cmd_env_profiles("qt-$1");
 		}
 	}
 }
@@ -107,7 +111,7 @@ for my $_ (@ARGV) {
 	when ('test') {
 		my @args = ('-C', $CMAKE_BUILD_TYPE, '-j', '2');
 
-		if ($ENV{label} =~ /^mingw/ && $^O ne 'MSWin32') {
+		if ($T =~ /^mingw/ && $^O ne 'MSWin32') {
 			exec("$FindBin::Bin/cmake-run-tests-on-vbox", @args);
 			die "$?: $!";
 		}
