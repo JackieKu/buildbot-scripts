@@ -109,14 +109,8 @@ for my $_ (@ARGV) {
 		run0('cpack', '-C', $CMAKE_BUILD_TYPE);
 	}
 	when ('test') {
-		my @args = ('-C', $CMAKE_BUILD_TYPE, '-j', '2');
-
-		if ($T =~ /^mingw/ && $^O ne 'MSWin32') {
-			exec("$FindBin::Bin/cmake-run-tests-on-vbox", @args);
-			die "$?: $!";
-		}
-
-		my $rv = runS('ctest', @args);
+		my $rv = runS(($T =~ /^mingw/ && $^O ne 'MSWin32') ? "$FindBin::Bin/cmake-run-tests-on-vbox" : 'ctest',
+			'-C', $CMAKE_BUILD_TYPE, '-j', '2');
 		open(my $fh, '>', 'TEST_RESULT');
 		if ($rv != 0) {
 			print $fh "$rv:FAILED\n";
