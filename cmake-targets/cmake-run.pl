@@ -54,7 +54,7 @@ sub set_env_for_target
 
 sub env_fixup
 {
-	next if ($^O ne 'MSWin32');
+	return if ($^O ne 'MSWin32');
 
 	require File::Spec;
 	import File::Spec;
