@@ -16,7 +16,7 @@ sub D
 # Get the environment variables set by batch file
 sub cmd_env
 {
-	open(my $fh, "-|", "cmd.exe /c \"$_[0] & echo ====ENV==== & set\"") || die;
+	open(my $fh, "-|", "cmd.exe /c \"$_[0] & echo ====ENV==== & set\"") || die "$?: $!";
 	while (my $_ = <$fh>) {
 		if (/^====ENV====/) {
 			while (my $_ = <$fh>) {
@@ -40,7 +40,7 @@ sub cmd_env_profiles
 	cmd_env($cmd);
 }
 
-sub cmd_env_for_target
+sub set_env_for_target
 {
 	given ($T) {
 		when ('borland') {
@@ -54,6 +54,8 @@ sub cmd_env_for_target
 
 sub env_fixup
 {
+	next if ($^O ne 'MSWin32');
+
 	require File::Spec;
 	import File::Spec;
 	# Exclude the directories contain a shell
@@ -86,12 +88,10 @@ sub runS
 }
 
 (-d 'build') || mkdir 'build';
-chdir('build') || die;
+chdir('build') || die "$?: $!";
 
-cmd_env_for_target();
-if ($^O eq 'MSWin32') {
-	env_fixup();
-}
+set_env_for_target();
+env_fixup();
 
 my $CMAKE = $ENV{CMAKE_EXECUTABLE} || 'cmake';
 my $CMAKE_BUILD_TYPE = $ENV{CMAKE_BUILD_TYPE} || $ENV{Configuration} || 'Release';
@@ -109,9 +109,9 @@ for my $_ (@ARGV) {
 		run0('cpack', '-C', $CMAKE_BUILD_TYPE);
 	}
 	when ('test') {
-		my $rv = runS(($T =~ /^mingw/ && $^O ne 'MSWin32') ? "$FindBin::Bin/cmake-run-tests-on-vbox" : 'ctest',
+		my $rv = runS(($T =~ /^mingw/ && $^O ne 'MSWin32') ? "$FindBin::Bin/ctest-vbox" : 'ctest',
 			'-C', $CMAKE_BUILD_TYPE, '-j', '2');
-		open(my $fh, '>', 'TEST_RESULT');
+		open(my $fh, '>', 'TEST_RESULT') || die "$?: $!";
 		if ($rv != 0) {
 			print $fh "$rv:FAILED\n";
 		} else {
