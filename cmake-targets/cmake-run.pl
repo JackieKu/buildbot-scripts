@@ -2,10 +2,9 @@
 
 use common::sense;
 
-use Cwd;
 use FindBin;
-use File::Spec;
-use Text::ParseWords;
+use autouse 'Cwd' => qw(cwd);
+use autouse 'Text::ParseWords' => qw(shellwords);
 
 my $KUUTILS_DIR = $ENV{KUUTILS_DIR} || 'E:\software\_util_\KuUtils';
 my $T = $ENV{label};
@@ -56,6 +55,8 @@ sub cmd_env_for_target
 
 sub env_fixup
 {
+	require File::Spec;
+	import File::Spec;
 	# Exclude the directories contain a shell
 	#D($ENV{PATH});
 	$ENV{PATH} = join(';', grep {!($_ eq '.' || m:GnuWin32|Sysinternals|[/\\]_media_[/\\]|perl[/\\]c[/\\]bin:i || -e "$_/sh.exe" || -e "$_/bash.exe")} File::Spec->path());
