@@ -58,7 +58,7 @@ sub env_fixup
 {
 	# Exclude the directories contain a shell
 	#D($ENV{PATH});
-	$ENV{PATH} = join(';', grep {!($_ eq '.' || m:GnuWin32|Sysinternals|[/\\]_media_[/\\]|perl[/\\]c[/\\]bin: || -e "$_/sh.exe" || -e "$_/bash.exe")} File::Spec->path());
+	$ENV{PATH} = join(';', grep {!($_ eq '.' || m:GnuWin32|Sysinternals|[/\\]_media_[/\\]|perl[/\\]c[/\\]bin:i || -e "$_/sh.exe" || -e "$_/bash.exe")} File::Spec->path());
 	#D($ENV{PATH});
 }
 
