@@ -3,7 +3,6 @@
 use common::sense;
 
 use FindBin;
-use autouse 'Cwd' => qw(cwd);
 use autouse 'Text::ParseWords' => qw(shellwords);
 
 my $KUUTILS_DIR = $ENV{KUUTILS_DIR} || 'E:\software\_util_\KuUtils';
@@ -104,7 +103,7 @@ for my $_ (@ARGV) {
 		run0($CMAKE, @args, "-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE", shellwords($ENV{CMAKE_OPTS}), '..');
 	}
 	when ('build') {
-		run0('cmake', '--build', cwd(), '--config', $CMAKE_BUILD_TYPE, '--', shellwords($ENV{CMAKE_BUILDER_OPTIONS}));
+		run0('cmake', '--build', '.', '--config', $CMAKE_BUILD_TYPE, '--', shellwords($ENV{CMAKE_BUILDER_OPTIONS}));
 	}
 	when ('pack') {
 		run0('cpack', '-C', $CMAKE_BUILD_TYPE);
