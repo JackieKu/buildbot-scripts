@@ -1,0 +1,2 @@
+#! /bin/sh
+rsync --remove-source-files _lib_/ ../_lib_/ -av

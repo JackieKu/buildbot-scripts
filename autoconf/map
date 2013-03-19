@@ -1,0 +1,50 @@
+#! /bin/sh
+
+T="${label:="${LABEL:="$1"}"}"
+
+if [ -z "$T" ] ; then
+	echo '$label and $1 is not set' 1>&2
+	exit 1
+fi
+
+exe=
+case "`uname -s`" in
+	MINGW*)
+		exe=.exe
+	;;
+esac
+
+e() {
+	eval "$1='$2'"
+	echo "$1=$2"
+}
+
+case "$T" in
+	mingw-w32)
+		e CTARGET i686-w64-mingw32
+		e CRT_GLOB "/usr/$CTARGET/lib/CRT_glob.o"
+	;;
+	mingw-w64)
+		e CTARGET x86_64-w64-mingw32
+		e CRT_GLOB "/usr/$CTARGET/$CTARGET/lib/CRT_glob.o"
+	;;
+esac
+
+e REF "$PWD/S/_lib_"
+case "$T" in
+	mingw-w32|mingw-w64)
+		e B_CONF "--build=$(gcc -dumpmachine) --host=$CTARGET --prefix= --enable-static --disable-shared --disable-nls --disable-i18n --with-include-path=$PWD/S/_lib_/include --with-lib-path=$PWD/S/_lib_/lib"
+		e CFLAGS "-pipe -O3 -DNDEBUG -g -I$REF/include"
+		e CXXFLAGS "$CFLAGS"
+		e LDFLAGS "-L$REF/lib"
+	;;
+esac
+
+cat <<_EOF_
+CC=$CTARGET-gcc$exe
+CXX=$CTARGET-g++$exe
+M_JOBS=-j 8
+PKG_CONFIG=pkg-config
+PKG_CONFIG_PATH=$REF/lib/pkgconfig
+PKG_CONFIG_SYSROOT_DIR=$REF
+_EOF_

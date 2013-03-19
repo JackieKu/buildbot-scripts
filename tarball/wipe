@@ -1,0 +1,3 @@
+#! /bin/sh
+
+rm -rf S _lib_

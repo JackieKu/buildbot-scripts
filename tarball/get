@@ -1,0 +1,34 @@
+#! /bin/sh
+
+set -e
+
+echo "==--BUILD_TAGS $BUILD_VERSION--=="
+
+. "$B_SCRIPTS_D/tarball/wipe"
+
+uri="$1"
+shift
+if [ "$1" ] ; then
+	filename="$1"
+else
+	filename="${uri##*/}"
+fi
+
+D="$HOME/Downloads"
+filepath=
+for d in /usr/portage/distfiles "$D" ; do
+	if [ -r "$d/$filename" ] ; then
+		filepath="$d/$filename"
+		break
+	fi
+done
+
+if [ -z "$filepath" ] ; then
+	aria2-fetch "$uri" "$D" "$filename"
+	filepath="$D/$filename"
+fi
+
+tmpd=upk.d.$$
+unpack -d $tmpd "$filepath"
+mv $tmpd/* S
+rmdir $tmpd
