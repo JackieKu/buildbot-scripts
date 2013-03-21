@@ -1,0 +1,8 @@
+#! /bin/sh
+
+if [ "$BUILD_GIT_COMMIT" ] ; then
+	git reset --hard "$BUILD_GIT_COMMIT"
+	echo "==--BUILD_TAGS $BUILD_GIT_COMMIT--=="
+else
+	true
+fi
