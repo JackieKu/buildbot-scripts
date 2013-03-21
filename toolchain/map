@@ -12,11 +12,20 @@ e() {
 	echo "$1=$2"
 }
 
+B_SYSTEM_NAME="`uname -s`"
 case "$T" in
 	mingw-w32)
 		e CTARGET i686-w64-mingw32
-		e CRT_GLOB "/usr/$CTARGET/lib/CRT_glob.o"
-		e SYSROOT "/usr/$CTARGET"
+
+		if [ "$OPT_TOOLCHAIN" ] ; then
+			e PATH_OVERRIDE "/opt/i686-w64-mingw32/gcc-bin:/opt/i686-w64-mingw32/bin:`echo $PATH | sed -r 's#[^:]+i686-w64-mingw32[^:]+##g'`"
+			e PATH "$PATH_OVERRIDE"
+			e CRT_GLOB "/opt/$CTARGET/$CTARGET/lib/CRT_glob.o"
+			e SYSROOT "/opt/$CTARGET/$CTARGET"
+		else
+			e CRT_GLOB "/usr/$CTARGET/lib/CRT_glob.o"
+			e SYSROOT "/usr/$CTARGET"
+		fi
 	;;
 	mingw-w64)
 		e CTARGET x86_64-w64-mingw32
@@ -26,7 +35,6 @@ case "$T" in
 esac
 
 exe=
-B_SYSTEM_NAME="`uname -s`"
 case "$B_SYSTEM_NAME" in
 	MINGW*)
 		CBUILD="$CTARGET"
