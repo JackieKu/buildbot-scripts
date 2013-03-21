@@ -1,0 +1,32 @@
+#! /bin/sh
+
+[ -z "$PATH_OVERRIDE" ] || PATH="$PATH_OVERRIDE"
+rm -rf _lib_
+
+cd S
+. "$B_SCRIPTS_D/git/reset"
+unset CFLAGS CXXFLAGS
+if [ "$BUILD_DEBUG" == 'true' ] ; then
+	myconf="--disable-optimizations"
+else
+	myconf=
+fi
+case "$label" in
+	mingw*)
+		myconf="$myconf --disable-pthreads"
+	;;
+esac
+./configure \
+	--target-os=mingw32 --cross-prefix=$CTARGET- --arch=${CTARGET%%-*} --pkg_config=pkg-config \
+	--prefix=/. \
+	--enable-gpl --enable-nonfree \
+	--disable-doc \
+	--enable-runtime-cpudetect --disable-amd3dnow --disable-amd3dnowext \
+	--enable-dxva2 \
+	--enable-libfreetype --enable-zlib --enable-gnutls --enable-libopus \
+	--enable-debug \
+	$myconf
+
+make $M_JOBS V=1
+make DESTDIR="$WORKSPACE/_lib_" install
+sed -i -r -e 's:^(prefix=)/.:\0:g' ../_lib_/lib/pkgconfig/*.pc
