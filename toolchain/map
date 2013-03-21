@@ -12,7 +12,14 @@ e() {
 	echo "$1=$2"
 }
 
+_msys() {
+	PATH_BASE="/usr/local/bin:/bin:/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem:/e/software/_dev_/posix"
+	PATH="$PATH_BASE"
+}
+
 B_SYSTEM_NAME="`uname -s`"
+B_TARGET="$T"
+
 case "$T" in
 	mingw-w32)
 		e CTARGET i686-w64-mingw32
@@ -32,7 +39,19 @@ case "$T" in
 		e CRT_GLOB "/usr/$CTARGET/$CTARGET/lib/CRT_glob.o"
 		e SYSROOT "/usr/$CTARGET/$CTARGET"
 	;;
+	mingw-w32-msys)
+		_msys
+		B_TARGET=mingw-w32
+
+		e CTARGET i686-w64-mingw32
+		tc_path=/c/Qt/Qt5*/Tools/MinGW
+		e SYSROOT "$tc_path/$CTARGET"
+		e PATH_OVERRIDE "$tc_path/bin:$PATH"
+		e PATH_OVERRIDE "$PATH_OVERRIDE"
+		e CRT_GLOB "$SYSROOT/lib/CRT_glob.o"
+	;;
 esac
+echo "B_TARGET=$B_TARGET"
 
 exe=
 case "$B_SYSTEM_NAME" in

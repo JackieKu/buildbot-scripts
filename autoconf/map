@@ -9,13 +9,17 @@ else
 fi
 
 e REF "$PWD/S/_lib_"
+e CFLAGS "-pipe -g $CFLAGS_OPT$NO_CYGWIN"
+e CXXFLAGS "$CFLAGS"
+e CPPFLAGS "-I$REF/include"
+e LDFLAGS "-L$REF/lib"
+B_CONF_MINGW="--prefix= --enable-static --disable-shared --disable-nls --disable-i18n"
 case "$T" in
 	mingw-w32|mingw-w64)
-		e B_CONF "--build=$CBUILD --host=$CTARGET --prefix= --enable-static --disable-shared --disable-nls --disable-i18n"
-		e CFLAGS "-pipe -g $CFLAGS_OPT$NO_CYGWIN"
-		e CXXFLAGS "$CFLAGS"
-		e CPPFLAGS "-I$REF/include"
-		e LDFLAGS "-L$REF/lib"
+		e B_CONF "--build=$CBUILD --host=$CTARGET $B_CONF_MINGW"
+	;;
+	mingw-w32-msys)
+		e B_CONF "$B_CONF_MINGW"
 	;;
 esac
 
