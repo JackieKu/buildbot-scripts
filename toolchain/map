@@ -18,10 +18,11 @@ _msys() {
 }
 
 B_SYSTEM_NAME="`uname -s`"
-B_TARGET="$T"
-
 case "$T" in
 	mingw-w32)
+		e R_DEFAULT "$T"
+		e R_MSYS mingw-w32-msys
+
 		e CTARGET i686-w64-mingw32
 
 		if [ "$OPT_TOOLCHAIN" ] ; then
@@ -35,13 +36,17 @@ case "$T" in
 		fi
 	;;
 	mingw-w64)
+		e R_DEFAULT "$T"
+		e R_MSYS mingw-w64-msys
+
 		e CTARGET x86_64-w64-mingw32
 		e CRT_GLOB "/usr/$CTARGET/$CTARGET/lib/CRT_glob.o"
 		e SYSROOT "/usr/$CTARGET/$CTARGET"
 	;;
 	mingw-w32-msys)
 		_msys
-		B_TARGET=mingw-w32
+		e R_DEFAULT mingw-w32
+		e R_MSYS "$T"
 
 		e CTARGET i686-w64-mingw32
 		tc_path=/c/Qt/Qt5*/Tools/MinGW
@@ -51,7 +56,6 @@ case "$T" in
 		e CRT_GLOB "$SYSROOT/lib/CRT_glob.o"
 	;;
 esac
-echo "B_TARGET=$B_TARGET"
 
 exe=
 case "$B_SYSTEM_NAME" in
