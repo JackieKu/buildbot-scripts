@@ -19,11 +19,13 @@ case "$T" in
 	;;
 esac
 
+# Ignore these for cross-toolchains (it would be problmatic for multitarget)
+# PKG_CONFIG_LIBDIR+=:$SYSROOT/usr/lib/pkgconfig:$SYSROOT/usr/share/pkgconfig
 cat <<_EOF_
 CC=$CTARGET-gcc$exe
 CXX=$CTARGET-g++$exe
 M_JOBS=-j 8
 PKG_CONFIG pkg-config
-PKG_CONFIG_LIBDIR=$REF/lib/pkgconfig:$SYSROOT/usr/lib/pkgconfig:$SYSROOT/usr/share/pkgconfig
+PKG_CONFIG_LIBDIR=$REF/lib/pkgconfig
 PKG_CONFIG_SYSROOT_DIR=$REF
 _EOF_
