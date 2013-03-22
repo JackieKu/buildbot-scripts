@@ -11,8 +11,10 @@ if [ "$BUILD_DEBUG" == 'true' ] ; then
 else
 	myconf=
 fi
-case "$label" in
+is_mingw=
+case "${label:=$LABEL}" in
 	mingw*)
+		is_mingw=1
 		myconf="$myconf --disable-pthreads"
 	;;
 esac
@@ -27,6 +29,7 @@ esac
 	--enable-libfreetype --enable-zlib --enable-gnutls --enable-libopus \
 	--enable-debug \
 	$myconf
+[ -z "$is_mingw" ] || sed -i -r -e 's/(HAVE_NANOSLEEP) 1/\1 0/g' config.h
 
 make $M_JOBS V=1
 make DESTDIR="$WORKSPACE/_lib_" install

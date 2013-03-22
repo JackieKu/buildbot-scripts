@@ -18,6 +18,12 @@ _msys() {
 	PATH="$PATH_BASE"
 }
 
+_cygwin() {
+	PATH_WINDOWS=":/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem"
+	PATH_BASE="/usr/local/bin:bin:/bin$PATH_WINDOWS:/cygdrive/e/software/_dev_/nasm:/cygdrive/e/software/_dev_/posix"
+	PATH="$PATH_BASE"
+}
+
 B_SYSTEM_NAME="`uname -s`"
 case "$T" in
 	mingw-w32)
