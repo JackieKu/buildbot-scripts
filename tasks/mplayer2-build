@@ -29,7 +29,6 @@ esac
 	--prefix= \
 	--enable-static \
 	--enable-runtime-cpudetection \
-	--disable-3dnow --disable-3dnowext \
 	--with-dvdnav-config=$PWD/dvdnav-config --with-dvdread-config=$PWD/dvdread-config \
 	--disable-libdvdcss-internal --enable-dvdnav --disable-dvdread-internal --enable-dvdread \
 	--extra-libs-mplayer="-L$REF/lib -ldvdcss" \

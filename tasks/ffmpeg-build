@@ -23,7 +23,7 @@ esac
 	--prefix=/. \
 	--enable-gpl --enable-nonfree \
 	--disable-doc \
-	--enable-runtime-cpudetect --disable-amd3dnow --disable-amd3dnowext \
+	--enable-runtime-cpudetect \
 	--enable-dxva2 \
 	--enable-libfreetype --enable-zlib --enable-gnutls --enable-libopus \
 	--enable-debug \
