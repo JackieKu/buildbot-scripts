@@ -1,0 +1,40 @@
+#! /bin/sh
+
+[ -z "$PATH_OVERRIDE" ] || PATH="$PATH_OVERRIDE"
+
+cd S
+. "$B_SCRIPTS_D/git/reset"
+
+# GL headers copied from Strawberry Perl
+ln -s /home/jackie/prog/_lib_/GL _lib_/include
+
+sed -i -r -e 's:^const GUID IID_:static \0_unused_:g' loader/dshow/DS_Filter.c
+
+echo -e "#! /bin/sh\nexec pkg-config \"\$@\" dvdread" >dvdread-config
+# dvdnav-config has non-standard --minilibs :-(
+echo -e "#! /bin/sh\nexec sh '$REF/bin/dvdnav-config' --prefix='$REF' \"\$@\"" >dvdnav-config
+chmod +x dvdread-config dvdnav-config
+
+unset CFLAGS CXXFLAGS
+[ "$BUILD_DEBUG" != true ] || export CFLAGS="-pipe -O0 -g"
+myconf=
+case "$label" in
+	mingw*)
+		myconf="$myconf --disable-pthreads --disable-termcap --disable-termios --disable-lirc --disable-lircc"
+	;;
+esac
+
+./configure \
+	--enable-cross-compile --target=$CTARGET --pkg-config=pkg-config \
+	--prefix= \
+	--enable-static \
+	--enable-runtime-cpudetection \
+	--disable-3dnow --disable-3dnowext \
+	--with-dvdnav-config=$PWD/dvdnav-config --with-dvdread-config=$PWD/dvdread-config \
+	--disable-libdvdcss-internal --enable-dvdnav --disable-dvdread-internal --enable-dvdread \
+	--extra-libs-mplayer="-L$REF/lib -ldvdcss" \
+	--enable-debug \
+	$myconf
+
+make $M_JOBS V=1
+$CTARGET-strip -o mplayer2.exe mplayer.exe
