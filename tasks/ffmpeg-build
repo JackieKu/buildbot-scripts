@@ -15,11 +15,10 @@ is_mingw=
 case "${label:=$LABEL}" in
 	mingw*)
 		is_mingw=1
-		myconf="$myconf --disable-pthreads --target-os=mingw32 --arch=${CTARGET%%-*}"
+		myconf="$myconf --cross-prefix=$CTARGET- --target-os=mingw32 --arch=${CTARGET%%-*} --disable-pthreads"
 	;;
 esac
 ./configure \
-	--cross-prefix=$CTARGET-
 	--pkg_config=pkg-config \
 	--prefix=/. \
 	--enable-gpl --enable-nonfree \
