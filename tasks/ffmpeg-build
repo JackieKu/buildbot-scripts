@@ -16,8 +16,9 @@ case "$label" in
 		myconf="$myconf --disable-pthreads"
 	;;
 esac
+[ -z "$B_CROSS_COMPILE" ] || myconf="$myconf --target-os=mingw32 --cross-prefix=$CTARGET- --arch=${CTARGET%%-*}"
 ./configure \
-	--target-os=mingw32 --cross-prefix=$CTARGET- --arch=${CTARGET%%-*} --pkg_config=pkg-config \
+	--pkg_config=pkg-config \
 	--prefix=/. \
 	--enable-gpl --enable-nonfree \
 	--disable-doc \

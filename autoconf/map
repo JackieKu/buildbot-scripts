@@ -8,7 +8,7 @@ else
 	CFLAGS_OPT="-O3 -DNDEBUG"
 fi
 
-e REF "$PWD/S/_lib_"
+e REF "$(_pwd)/S/_lib_"
 e CFLAGS "-pipe -g $CFLAGS_OPT$NO_CYGWIN"
 e CXXFLAGS "$CFLAGS"
 e CPPFLAGS "-I$REF/include"
@@ -24,12 +24,14 @@ case "$T" in
 esac
 
 # Ignore these for cross-toolchains (it would be problmatic for multitarget)
-# PKG_CONFIG_LIBDIR+=:$SYSROOT/usr/lib/pkgconfig:$SYSROOT/usr/share/pkgconfig
+#PKG_CONFIG_LIBDIR+=:$SYSROOT/usr/lib/pkgconfig:$SYSROOT/usr/share/pkgconfig
+
 cat <<_EOF_
 CC=$CTARGET-gcc$exe
 CXX=$CTARGET-g++$exe
 M_JOBS=-j 8
-PKG_CONFIG pkg-config
+PKG_CONFIG=pkg-config
 PKG_CONFIG_LIBDIR=$REF/lib/pkgconfig
-PKG_CONFIG_SYSROOT_DIR=$REF
 _EOF_
+
+[ -z "$B_CROSS_COMPILE" ] || e PKG_CONFIG_SYSROOT_DIR "$REF"

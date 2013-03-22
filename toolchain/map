@@ -13,7 +13,8 @@ e() {
 }
 
 _msys() {
-	PATH_BASE="/usr/local/bin:/bin:/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem:/e/software/_dev_/posix"
+	PATH_WINDOWS=":/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem"
+	PATH_BASE="/usr/local/bin:/bin$PATH_WINDOWS:/e/software/_dev_/nasm:/e/software/_dev_/posix:/e/software/_util_/GnuWin32/root/bin"
 	PATH="$PATH_BASE"
 }
 
@@ -23,6 +24,7 @@ case "$T" in
 		e R_DEFAULT "$T"
 		e R_MSYS mingw-w32-msys
 
+		e B_CROSS_COMPILE 1
 		e CTARGET i686-w64-mingw32
 
 		if [ "$OPT_TOOLCHAIN" ] ; then
@@ -37,8 +39,9 @@ case "$T" in
 	;;
 	mingw-w64)
 		e R_DEFAULT "$T"
-		e R_MSYS mingw-w64-msys
+		e R_MSYS "$T"
 
+		e B_CROSS_COMPILE 1
 		e CTARGET x86_64-w64-mingw32
 		e CRT_GLOB "/usr/$CTARGET/$CTARGET/lib/CRT_glob.o"
 		e SYSROOT "/usr/$CTARGET/$CTARGET"
@@ -49,19 +52,26 @@ case "$T" in
 		e R_MSYS "$T"
 
 		e CTARGET i686-w64-mingw32
-		tc_path=/c/Qt/Qt5*/Tools/MinGW
+		tc_path="`echo /c/Qt/Qt5*/Tools/MinGW`"
 		e SYSROOT "$tc_path/$CTARGET"
 		e PATH_OVERRIDE "$tc_path/bin:$PATH"
-		e PATH_OVERRIDE "$PATH_OVERRIDE"
+		e PATH "$PATH_OVERRIDE"
 		e CRT_GLOB "$SYSROOT/lib/CRT_glob.o"
 	;;
 esac
 
 exe=
+_pwd() {
+	pwd "$@"
+}
 case "$B_SYSTEM_NAME" in
 	MINGW*)
 		CBUILD="$CTARGET"
 		exe=.exe
+
+		_pwd() {
+			pwd -W "$@"
+		}
 	;;
 	CYGWIN*)
 		CBUILD="$CTARGET"
