@@ -15,11 +15,11 @@ is_mingw=
 case "${label:=$LABEL}" in
 	mingw*)
 		is_mingw=1
-		myconf="$myconf --disable-pthreads"
+		myconf="$myconf --disable-pthreads --target-os=mingw32 --arch=${CTARGET%%-*}"
 	;;
 esac
-[ -z "$B_CROSS_COMPILE" ] || myconf="$myconf --target-os=mingw32 --cross-prefix=$CTARGET- --arch=${CTARGET%%-*}"
 ./configure \
+	--cross-prefix=$CTARGET-
 	--pkg_config=pkg-config \
 	--prefix=/. \
 	--enable-gpl --enable-nonfree \

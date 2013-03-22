@@ -20,15 +20,16 @@ _msys() {
 
 _cygwin() {
 	PATH_WINDOWS=":/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem"
-	PATH_BASE="/usr/local/bin:bin:/bin$PATH_WINDOWS:/cygdrive/e/software/_dev_/nasm:/cygdrive/e/software/_dev_/posix"
+	PATH_BASE="/usr/local/bin:/bin$PATH_WINDOWS"
 	PATH="$PATH_BASE"
 }
 
-B_SYSTEM_NAME="`uname -s`"
+e B_SYSTEM_NAME "`uname -s`"
 case "$T" in
 	mingw-w32)
 		e R_DEFAULT "$T"
 		e R_MSYS mingw-w32-msys
+		e R_CYG mingw-w32-cygwin
 
 		e B_CROSS_COMPILE 1
 		e CTARGET i686-w64-mingw32
@@ -46,6 +47,7 @@ case "$T" in
 	mingw-w64)
 		e R_DEFAULT "$T"
 		e R_MSYS "$T"
+		e R_CYG "$T"
 
 		e B_CROSS_COMPILE 1
 		e CTARGET x86_64-w64-mingw32
@@ -56,11 +58,25 @@ case "$T" in
 		_msys
 		e R_DEFAULT mingw-w32
 		e R_MSYS "$T"
+		e R_CYG mingw-w32-cygwin
 
 		e CTARGET i686-w64-mingw32
 		tc_path="`echo /c/Qt/Qt5*/Tools/MinGW`"
 		e SYSROOT "$tc_path/$CTARGET"
 		e PATH_OVERRIDE "$tc_path/bin:$PATH"
+		e PATH "$PATH_OVERRIDE"
+		e CRT_GLOB "$SYSROOT/lib/CRT_glob.o"
+	;;
+	mingw-w32-cygwin)
+		_cygwin
+		e R_DEFAULT mingw-w32
+		e R_MSYS mingw-w32-msys
+		e R_CYG "$T"
+
+		e CTARGET i686-w64-mingw32
+		tc_path="/cygdrive/d/_cygwin_/$CTARGET"
+		e SYSROOT "$tc_path/$CTARGET"
+		e PATH_OVERRIDE "$tc_path/bin:$tc_path/$CTARGET/bin:$PATH"
 		e PATH "$PATH_OVERRIDE"
 		e CRT_GLOB "$SYSROOT/lib/CRT_glob.o"
 	;;
@@ -81,7 +97,11 @@ case "$B_SYSTEM_NAME" in
 	;;
 	CYGWIN*)
 		CBUILD="$CTARGET"
-		NO_CYGWIN=" -mno-cygwin"
+		#NO_CYGWIN=" -mno-cygwin"
+
+		#_pwd() {
+		#	cygpath -m "$PWD"
+		#}
 	;;
 	*)
 		CBUILD="`gcc -dumpmachine`"

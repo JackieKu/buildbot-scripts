@@ -8,23 +8,24 @@ else
 	CFLAGS_OPT="-O3 -DNDEBUG"
 fi
 
+e TMPDIR "$(_pwd)/S/_tmp_"
+[ -d "$TMPDIR" ] || mkdir "$TMPDIR"
+
+_pkg_config_sysroot() {
+	e PKG_CONFIG_SYSROOT_DIR "$REF"
+}
+
 e REF "$(_pwd)/S/_lib_"
-e CFLAGS "-pipe -g $CFLAGS_OPT$NO_CYGWIN"
+e CFLAGS "-pipe -g $CFLAGS_OPT"
 e CXXFLAGS "$CFLAGS"
-e CPPFLAGS "-I$REF/include"
-e LDFLAGS "-L$REF/lib"
-B_CONF_MINGW="--prefix= --enable-static --disable-shared --disable-nls --disable-i18n"
+e CPPFLAGS "-I$REF/include$NO_CYGWIN"
+e LDFLAGS "-L$REF/lib$NO_CYGWIN"
+e B_CONF "--host=$CTARGET --build=$CBUILD --prefix= --enable-static --disable-shared --disable-nls --disable-i18n"
 case "$T" in
-	mingw-w32|mingw-w64)
-		e B_CONF "--build=$CBUILD --host=$CTARGET $B_CONF_MINGW"
-	;;
-	mingw-w32-msys)
-		e B_CONF "$B_CONF_MINGW"
+	mingw-w32|mingw-w64|*-cygwin)
+		_pkg_config_sysroot
 	;;
 esac
-
-# Ignore these for cross-toolchains (it would be problmatic for multitarget)
-#PKG_CONFIG_LIBDIR+=:$SYSROOT/usr/lib/pkgconfig:$SYSROOT/usr/share/pkgconfig
 
 cat <<_EOF_
 CC=$CTARGET-gcc$exe
@@ -33,5 +34,3 @@ M_JOBS=-j 8
 PKG_CONFIG=pkg-config
 PKG_CONFIG_LIBDIR=$REF/lib/pkgconfig
 _EOF_
-
-[ -z "$B_CROSS_COMPILE" ] || e PKG_CONFIG_SYSROOT_DIR "$REF"
