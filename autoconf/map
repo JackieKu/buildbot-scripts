@@ -28,8 +28,6 @@ case "$T" in
 esac
 
 cat <<_EOF_
-CC=$CTARGET-gcc$exe
-CXX=$CTARGET-g++$exe
 M_JOBS=-j 8
 PKG_CONFIG=pkg-config
 PKG_CONFIG_LIBDIR=$REF/lib/pkgconfig

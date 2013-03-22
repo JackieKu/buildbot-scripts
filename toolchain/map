@@ -12,6 +12,13 @@ e() {
 	echo "$1=$2"
 }
 
+_export() {
+	local v
+	for v ; do
+		echo "$v='`eval echo "\$$v"`'"
+	done
+}
+
 _msys() {
 	PATH_WINDOWS=":/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem"
 	PATH_BASE="/usr/local/bin:/bin$PATH_WINDOWS:/e/software/_dev_/nasm:/e/software/_dev_/posix:/e/software/_util_/GnuWin32/root/bin"
@@ -107,3 +114,8 @@ case "$B_SYSTEM_NAME" in
 		CBUILD="`gcc -dumpmachine`"
 	;;
 esac
+
+cat <<_EOF_
+CC=$CTARGET-gcc$exe
+CXX=$CTARGET-g++$exe
+_EOF_
