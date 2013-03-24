@@ -1,0 +1,32 @@
+From e162050ab5374e53da43dd722ef6f14dd8efee88 Mon Sep 17 00:00:00 2001
+From: Kai-Chieh Ku <kjackie@gmail.com>
+Date: Sun, 24 Mar 2013 12:18:41 +0800
+Subject: [PATCH] ao_portaudio: make device=help print host API name
+
+The user was not able to indentify which output device
+is using WASAPI or ASIO.
+---
+ libao2/ao_portaudio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/libao2/ao_portaudio.c b/libao2/ao_portaudio.c
+index 9fa1cdb..b4bf38e 100644
+--- a/libao2/ao_portaudio.c
++++ b/libao2/ao_portaudio.c
+@@ -121,10 +121,12 @@ static int find_device(struct ao *ao, const char *name)
+     for (int n = 0; n < count; n++) {
+         const PaDeviceInfo* info = Pa_GetDeviceInfo(n);
+         if (help) {
++            const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(info->hostApi);
+             if (info->maxOutputChannels < 1)
+                 continue;
+-            mp_msg(MSGT_AO, MSGL_INFO, "  %d '%s', %d channels, latency: %.2f "
++            mp_msg(MSGT_AO, MSGL_INFO, "  %d '%s' [%s], %d channels, latency: %.2f "
+                    "ms, sample rate: %.0f\n", n, info->name,
++                   hostApiInfo->name,
+                    info->maxOutputChannels,
+                    info->defaultHighOutputLatency * 1000,
+                    info->defaultSampleRate);
+-- 
+1.8.1.5
+

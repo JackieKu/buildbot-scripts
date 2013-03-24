@@ -8,6 +8,9 @@ cd S
 # GL headers copied from Strawberry Perl
 ln -s /home/jackie/prog/_lib_/GL _lib_/include
 
+for f in "$B_SCRIPTS_D/patches/mplayer2"/* ; do
+	git apply "$f"
+done
 sed -i -r -e 's:^const GUID IID_:static \0_unused_:g' loader/dshow/DS_Filter.c
 
 echo -e "#! /bin/sh\nexec pkg-config \"\$@\" dvdread" >dvdread-config
@@ -20,7 +23,7 @@ unset CFLAGS CXXFLAGS
 myconf=
 case "$label" in
 	mingw*)
-		myconf="$myconf --disable-pthreads --disable-termcap --disable-termios --disable-lirc --disable-lircc"
+		myconf="$myconf --disable-termcap --disable-termios --disable-lirc --disable-lircc"
 	;;
 esac
 
