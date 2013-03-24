@@ -25,7 +25,7 @@ _get_target() {
 }
 
 if [ -z "${Configuration:-$CONFIGURATION}" ] ; then
-	e Configuration Release
+	e Configuration RelWithDebInfo
 fi
 e CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE:-$Configuration}
 
