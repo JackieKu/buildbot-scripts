@@ -1,5 +1,7 @@
 #! /bin/sh
 
+. "$B_SCRIPTS_D/delegate-shell"
+
 [ -z "$PATH_OVERRIDE" ] || PATH="$PATH_OVERRIDE"
 rm -rf _lib_
 
@@ -15,7 +17,8 @@ is_mingw=
 case "${label:=$LABEL}" in
 	mingw*)
 		is_mingw=1
-		myconf="$myconf --cross-prefix=$CTARGET- --target-os=mingw32 --arch=${CTARGET%%-*} --disable-pthreads"
+		myconf="$myconf --disable-pthreads"
+		[ -z "$B_CROSS_COMPILE" ] || myconf="$myconf --cross-prefix=$CTARGET- --target-os=mingw32 --arch=${CTARGET%%-*}"
 	;;
 esac
 ./configure \

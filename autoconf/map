@@ -8,19 +8,22 @@ else
 	CFLAGS_OPT="-O3 -DNDEBUG"
 fi
 
-e TMPDIR "$(_pwd)/S/_tmp_"
-[ -d "$TMPDIR" ] || mkdir "$TMPDIR"
+e TMPDIR "$(_pwd)/_tmp_"
+rm -rf "$TMPDIR"
+mkdir "$TMPDIR"
 
 _pkg_config_sysroot() {
 	e PKG_CONFIG_SYSROOT_DIR "$REF"
 }
 
 e REF "$(_pwd)/S/_lib_"
-e CFLAGS "-pipe -g $CFLAGS_OPT"
+e CFLAGS "$CFLAGS_OPT -pipe -g -fno-strict-aliasing"
 e CXXFLAGS "$CFLAGS"
 e CPPFLAGS "-I$REF/include$NO_CYGWIN"
 e LDFLAGS "-L$REF/lib$NO_CYGWIN"
-e B_CONF "--host=$CTARGET --build=$CBUILD --prefix= --enable-static --disable-shared --disable-nls --disable-i18n"
+B_CONF_CROSS_PREFIX=
+[ -z "$B_CROSS_COMPILE" ] || B_CONF_CROSS_PREFIX="--host=$CTARGET --build=$CBUILD "
+e B_CONF "$B_CONF_CROSS_PREFIX--prefix= --enable-static --disable-shared --disable-nls --disable-i18n"
 case "$T" in
 	mingw-w32|mingw-w64|*-cygwin)
 		_pkg_config_sysroot

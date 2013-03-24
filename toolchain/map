@@ -1,11 +1,6 @@
 #! /bin/sh
 
-T="${label:="${LABEL:="$1"}"}"
-
-if [ -z "$T" ] ; then
-	echo '$label and $1 is not set' 1>&2
-	exit 1
-fi
+. "$B_SCRIPTS_D/delegate-shell"
 
 e() {
 	eval "$1='$2'"
@@ -15,13 +10,18 @@ e() {
 _export() {
 	local v
 	for v ; do
-		echo "$v='`eval echo "\$$v"`'"
+		echo "$v='`eval echo "\\\$$v"`'"
 	done
 }
 
 _msys() {
+	local D D_MSYS
+	D=/e/software
+	D_MSYS="$D/_dev_/msys-more"
+
 	PATH_WINDOWS=":/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem"
-	PATH_BASE="/usr/local/bin:/bin$PATH_WINDOWS:/e/software/_dev_/nasm:/e/software/_dev_/posix:/e/software/_util_/GnuWin32/root/bin"
+	PATH_BASE="$D_MSYS/pre:/usr/local/bin:/bin:$D_MSYS/post$PATH_WINDOWS:$D/_dev_/yasm:$D/_dev_/nasm"
+	#:/e/software/_util_/GnuWin32/root/bin
 	PATH="$PATH_BASE"
 }
 
@@ -31,35 +31,31 @@ _cygwin() {
 	PATH="$PATH_BASE"
 }
 
-e B_SYSTEM_NAME "`uname -s`"
+_mingw_linux() {
+	e R_DEFAULT "$T"
+	e B_CROSS_COMPILE 1
+	e CRT_GLOB "/opt/$CTARGET/$CTARGET/lib/CRT_glob.o"
+	e SYSROOT "/opt/$CTARGET/$CTARGET"
+}
+
+_export B_SYSTEM_NAME
+
 case "$T" in
 	mingw-w32)
-		e R_DEFAULT "$T"
 		e R_MSYS mingw-w32-msys
 		e R_CYG mingw-w32-cygwin
 
-		e B_CROSS_COMPILE 1
 		e CTARGET i686-w64-mingw32
 
-		if [ "$OPT_TOOLCHAIN" ] ; then
-			e PATH_OVERRIDE "/opt/i686-w64-mingw32/gcc-bin:/opt/i686-w64-mingw32/bin:`echo $PATH | sed -r 's#[^:]+i686-w64-mingw32[^:]+##g'`"
-			e PATH "$PATH_OVERRIDE"
-			e CRT_GLOB "/opt/$CTARGET/$CTARGET/lib/CRT_glob.o"
-			e SYSROOT "/opt/$CTARGET/$CTARGET"
-		else
-			e CRT_GLOB "/usr/$CTARGET/lib/CRT_glob.o"
-			e SYSROOT "/usr/$CTARGET"
-		fi
+		_mingw_linux
 	;;
 	mingw-w64)
-		e R_DEFAULT "$T"
 		e R_MSYS "$T"
 		e R_CYG "$T"
 
-		e B_CROSS_COMPILE 1
 		e CTARGET x86_64-w64-mingw32
-		e CRT_GLOB "/usr/$CTARGET/$CTARGET/lib/CRT_glob.o"
-		e SYSROOT "/usr/$CTARGET/$CTARGET"
+
+		_mingw_linux
 	;;
 	mingw-w32-msys)
 		_msys
@@ -80,6 +76,7 @@ case "$T" in
 		e R_MSYS mingw-w32-msys
 		e R_CYG "$T"
 
+		e B_CROSS_COMPILE 1
 		e CTARGET i686-w64-mingw32
 		tc_path="/cygdrive/d/_cygwin_/$CTARGET"
 		e SYSROOT "$tc_path/$CTARGET"
@@ -115,7 +112,9 @@ case "$B_SYSTEM_NAME" in
 	;;
 esac
 
+if [ "$CTARGET" ] ; then
 cat <<_EOF_
 CC=$CTARGET-gcc$exe
 CXX=$CTARGET-g++$exe
 _EOF_
+fi
