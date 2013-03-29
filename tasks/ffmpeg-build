@@ -8,7 +8,7 @@ rm -rf _lib_
 cd S
 . "$B_SCRIPTS_D/git/reset"
 unset CFLAGS CXXFLAGS
-if [ "$BUILD_DEBUG" == 'true' ] ; then
+if [ "$BUILD_DEBUG" = 'true' ] ; then
 	myconf="--disable-optimizations"
 else
 	myconf=

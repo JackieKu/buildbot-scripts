@@ -2,7 +2,7 @@
 
 . "$B_SCRIPTS_D/toolchain/map" "$@"
 
-if [ "${Configuration:=$CONFIGURATION}" == 'Debug' -o "$BUILD_DEBUG" == 'true' ] ; then
+if [ "${Configuration:=$CONFIGURATION}" = 'Debug' -o "$BUILD_DEBUG" = 'true' ] ; then
 	CFLAGS_OPT="-O0"
 else
 	CFLAGS_OPT="-O3 -DNDEBUG"
