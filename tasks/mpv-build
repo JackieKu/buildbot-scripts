@@ -1,0 +1,31 @@
+#! /bin/sh
+
+[ -z "$PATH_OVERRIDE" ] || PATH="$PATH_OVERRIDE"
+
+cd S
+. "$B_SCRIPTS_D/git/reset"
+. "$B_SCRIPTS_D/download/opengl-extension-headers"
+
+# Temporary fix for commit c8fd9e50e47838bbdb0dc5e0b974091312cb8833
+sed -i '/#include "ar\.h"/d' core/input/input.c
+
+unset CFLAGS CXXFLAGS
+[ "$BUILD_DEBUG" != true ] || export CFLAGS="-pipe -O0 -g"
+myconf=
+case "$label" in
+	mingw*)
+		myconf="$myconf --disable-termcap --disable-termios --disable-lirc --disable-lircc"
+	;;
+esac
+
+./configure \
+	--enable-cross-compile --target=$CTARGET --pkg-config=pkg-config \
+	--prefix= \
+	--enable-static \
+	--disable-manpage \
+	--extra-libs-mpv="-L$REF/lib -ldvdcss" \
+	$myconf
+
+make $M_JOBS V=1
+mv mpv.exe mpv_debug.exe
+$CTARGET-strip -o mpv.exe mpv_debug.exe

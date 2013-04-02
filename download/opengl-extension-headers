@@ -1,0 +1,10 @@
+#! /bin/sh
+
+GL_D=_lib_/include/GL
+mkdir -p "$GL_D"
+
+for f in glext.h glxext.h wglext.h ; do
+	unset filepath
+	. "$B_SCRIPTS_D/download/fetch" "http://www.opengl.org/registry/api/$f"
+	ln -s "$filepath" "$GL_D"
+done
