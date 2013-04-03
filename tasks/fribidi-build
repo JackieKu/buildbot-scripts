@@ -1,0 +1,25 @@
+#! /bin/sh
+
+rm -rf _lib_
+
+cd S
+. "$B_SCRIPTS_D/git/reset"
+
+# Pass 1: generate tables with host build system
+sed -i -e '/^SUBDIRS =/s: doc test::g' Makefile.am
+autoreconf -if
+CC= CFLAGS= LDFLAGS= PKG_CONFIG_SYSROOT_DIR= ./configure --without-glib
+echo -e "#! /bin/sh\nexit 0" >config.status
+make
+git clean -xdf -e '*.i' -e '*.h'
+rm -f config.h
+
+# Pass 2: cross compile and reuse the tables
+rm -f gen.tab/Makefile*
+sed -i -e '/^SUBDIRS =/s:gen\.tab::g' Makefile.am
+sed -i -e '\:gen\.tab/Makefile:d' configure.ac
+autoreconf -if
+./configure $B_CONF --without-glib
+echo -e "#! /bin/sh\nexit 0" >config.status
+make
+make DESTDIR="$WORKSPACE/_lib_" install
