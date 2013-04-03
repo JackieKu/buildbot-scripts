@@ -1,0 +1,8 @@
+#! /bin/sh
+
+if [ "$B_AUTORECONF" ] || [ ! -e configure -a -e configure.ac ] ; then
+	autoreconf -if
+fi
+./configure $B_CONF $B_EXTRA_CONF
+make $M_JOBS
+make DESTDIR="$WORKSPACE/_lib_" install
