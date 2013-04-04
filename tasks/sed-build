@@ -1,0 +1,20 @@
+#! /bin/sh
+
+rm -rf _lib_
+
+cd S
+. "$B_SCRIPTS_D/git/reset"
+git apply /usr/local/portage/ku/patches/sys-apps/sed/01_all_sed-4.2-win32-inplace.patch
+sed -i -r -e '/^SUBDIRS = /s/ (po|doc|testsuite)//g; /^html:/,+1d' Makefile.am
+
+./bootstrap --skip-po || true
+./configure $B_CONF
+
+make $M_JOBS
+
+$CTARGET-strip sed/sed.exe
+case "$CTARGET" in
+	i?86-*-mingw32)
+		upx sed/sed.exe
+	;;
+esac
