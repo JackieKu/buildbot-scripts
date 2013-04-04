@@ -4,8 +4,10 @@
 
 if [ "${Configuration:=$CONFIGURATION}" = 'Debug' -o "$BUILD_DEBUG" = 'true' ] ; then
 	CFLAGS_OPT="-O0"
+	CPPFLAGS_OPT=
 else
-	CFLAGS_OPT="-O3 -DNDEBUG"
+	CFLAGS_OPT="-O3"
+	CPPFLAGS_OPT="-DNDEBUG"
 fi
 
 e TMPDIR "$(_pwd)/_tmp_"
@@ -19,7 +21,7 @@ _pkg_config_sysroot() {
 e REF "$(_pwd)/S/_lib_"
 e CFLAGS "$CFLAGS_OPT -pipe -g -fno-strict-aliasing"
 e CXXFLAGS "$CFLAGS"
-e CPPFLAGS "-I$REF/include$NO_CYGWIN"
+e CPPFLAGS "$CPPFLAGS_OPT -I$REF/include$NO_CYGWIN"
 e LDFLAGS "-L$REF/lib$NO_CYGWIN"
 B_CONF_CROSS_PREFIX=
 [ -z "$B_CROSS_COMPILE" ] || B_CONF_CROSS_PREFIX="--host=$CTARGET --build=$CBUILD "
