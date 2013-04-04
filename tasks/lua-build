@@ -1,0 +1,36 @@
+#! /bin/sh
+
+_make() {
+	make CC="$CC" AR="$CTARGET-ar rcu" RANLIB="$CTARGET-ranlib" "$@"
+}
+
+D="$PWD/_lib_"
+rm -rf "$D"
+
+unset CFLAGS CXXFLAGS
+
+cd S/src
+_make $M_JOBS "LUA_T=lua.exe" "LUAC_T=luac.exe" lua.exe luac.exe
+
+mkdir -p "$D/lib/pkgconfig" "$D/include" "$D/bin"
+cp lua.exe luac.exe "$D/bin"
+cp liblua.a "$D/lib"
+cp `sed -n '/^TO_INC=/{s:TO_INC= *::; p}' ../Makefile` "$D/include"
+
+cd ..
+[ "$BUILD_VERSION" ] || BUILD_VERSION="`make pc | sed -n '/version=/{s:version=::g; p}'`"
+
+cat >"$D/lib/pkgconfig/lua.pc" <<_EOF_
+prefix=
+exec_prefix=\${prefix}/bin
+libdir=\${prefix}/lib
+includedir=\${prefix}/include
+
+Name: Lua
+Description: An Extensible Extension Language
+Version: ${BUILD_VERSION}
+
+Requires:
+Libs: -L\${libdir} -llua -lm
+Cflags: -I\${includedir}
+_EOF_
