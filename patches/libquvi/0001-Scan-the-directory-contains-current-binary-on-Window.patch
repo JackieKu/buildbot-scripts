@@ -1,0 +1,49 @@
+From ab089e01fc0ccfe41987a8e65dace0b7449329af Mon Sep 17 00:00:00 2001
+From: Kai-Chieh Ku <kjackie@gmail.com>
+Date: Fri, 5 Apr 2013 16:08:20 +0800
+Subject: [PATCH] Scan the directory contains current binary on Windows.
+
+---
+ src/libquvi/lua_wrap.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/src/libquvi/lua_wrap.c b/src/libquvi/lua_wrap.c
+index b062094..05b65ac 100644
+--- a/src/libquvi/lua_wrap.c
++++ b/src/libquvi/lua_wrap.c
+@@ -44,6 +44,11 @@
+ #include "curl_wrap.h"
+ #include "lua_wrap.h"
+ 
++#ifdef _WIN32
++#define WINDOWS_MEAN_AND_LEAN
++#include <windows.h>
++#endif
++
+ #ifdef _0
+ void dump_lua_stack(lua_State *l) /* http://www.lua.org/pil/24.2.3.html */
+ {
+@@ -376,6 +381,20 @@ static QUVIcode scan_known_dirs(_quvi_llst_node_t *dst,
+   _free(buf);
+   _scan;
+ 
++#ifdef _WIN32
++  {
++    char currentBinDir[MAX_PATH];
++    GetModuleFileNameA(NULL, currentBinDir, _countof(currentBinDir));
++    buf = strrchr(currentBinDir, '\\');
++    if (buf)
++      {
++        *buf = 0;
++        asprintf(&path, "%s\\libquvi-scripts\\%s", currentBinDir, spath);
++        _scan;
++      }
++  }
++#endif
++
+   /* Home directory */
+   homedir = getenv("HOME");
+   if (homedir)
+-- 
+1.8.1.5
+
