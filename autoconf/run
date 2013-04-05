@@ -1,0 +1,42 @@
+#! /bin/sh
+
+_init() {
+	rm -rf _lib_
+
+	cd S
+	[ ! -d .git ] || . "$B_SCRIPTS_D/git/reset"
+}
+
+_autoreconf() {
+	autoreconf -if
+}
+
+_configure() {
+	./configure $B_CONF $B_EXTRA_CONF
+}
+
+_gen() {
+	if [ "$B_AUTORECONF" ] || [ ! -e configure -a -e configure.ac ] ; then
+		_autoreconf
+	fi
+	_configure
+}
+
+_build() {
+	make $M_JOBS $B_MAKE_OPTS $B_EXTRA_MAKE_OPTS
+}
+
+_pack() {
+	make DESTDIR="$WORKSPACE/_lib_" install
+}
+
+_all() {
+	_init
+	_gen
+	_build
+	_pack
+}
+
+for a ; do
+	_$a
+done

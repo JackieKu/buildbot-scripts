@@ -1,7 +1,3 @@
 #! /bin/sh
 
-rm -rf _lib_
-
-cd S
-[ ! -d .git ] || . "$B_SCRIPTS_D/git/reset"
-. "$B_SCRIPTS_D/autoconf/build-common"
+. "$B_SCRIPTS_D/autoconf/run" all

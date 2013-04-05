@@ -1,8 +1,3 @@
 #! /bin/sh
 
-if [ "$B_AUTORECONF" ] || [ ! -e configure -a -e configure.ac ] ; then
-	autoreconf -if
-fi
-./configure $B_CONF $B_EXTRA_CONF
-make $M_JOBS $B_MAKE_OPTS $B_EXTRA_MAKE_OPTS
-make DESTDIR="$WORKSPACE/_lib_" install
+. "$B_SCRIPTS_D/autoconf/run" gen build pack
