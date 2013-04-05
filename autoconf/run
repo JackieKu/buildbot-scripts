@@ -37,6 +37,8 @@ _all() {
 	_pack
 }
 
+[ $# -gt 0 ] || set -- all
+
 for a ; do
 	_$a
 done
