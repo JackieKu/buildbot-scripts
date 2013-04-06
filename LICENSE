@@ -1,0 +1,7 @@
+These two file are covered by Apache License 2.0.
+* android-support-v4-googlemaps/android-support-v4-r11-googlemaps.jar
+  http://developer.android.com/tools/extras/support-library.html
+* android-junit-report/android-junit-report-1.5.8.jar
+  https://github.com/jsankey/android-junit-report/blob/master/LICENSE
+
+The other files in this repository are in public domain.
