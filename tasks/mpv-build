@@ -6,9 +6,6 @@ cd S
 . "$B_SCRIPTS_D/git/reset"
 . "$B_SCRIPTS_D/download/opengl-extension-headers"
 
-# Temporary fix for commit c8fd9e50e47838bbdb0dc5e0b974091312cb8833
-sed -i '/#include "ar\.h"/d' core/input/input.c
-
 unset CFLAGS CXXFLAGS
 [ "$BUILD_DEBUG" != true ] || export CFLAGS="-pipe -O0 -g"
 myconf=
