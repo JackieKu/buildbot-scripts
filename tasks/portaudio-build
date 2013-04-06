@@ -1,0 +1,19 @@
+#! /bin/sh
+
+B_EXTRA_CONF="--with-winapi=wmme,wasapi,wdmks,directx"
+
+# NOTE: ASIO SDK is written in C++, which means the final binary will
+# depend on libstdc++ and a library to support C++ exceptions.
+# Because we are using static linking, the default build process
+# of mplayer2/mpv would fail as long as it invoke gcc (instead of g++) for linking.
+# Fixing the build system is easy, but the result binary may become bloat as well.
+# For the above reasons, I'd prefer to disable ASIO anyway.
+# WASAPI should be a good alternative to ASIO.
+if [ "$BUILD_WITH_ASIO" = true ] ; then
+	# ASIO SDK (asiosdk2.2.zip) may be downloaded at
+	#   http://www.steinberg.net/en/company/developer.html
+	unzip -d "$REF" "$HOME/Downloads/asiosdk2.2.zip"
+	B_EXTRA_CONF="$B_EXTRA_CONF,asio --with-asiodir=$REF/ASIOSDK2"
+fi
+
+. "$B_SCRIPTS_D/autoconf/run" all
