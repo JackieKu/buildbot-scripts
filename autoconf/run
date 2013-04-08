@@ -16,7 +16,7 @@ _configure() {
 }
 
 _gen() {
-	if [ "$B_AUTORECONF" ] || [ ! -e configure -a -e configure.ac ] ; then
+	if [ "$B_AUTORECONF" ] || ( [ ! -e configure ] && [ -e configure.ac -o -e configure.in ] ) ; then
 		_autoreconf
 	fi
 	_configure
@@ -28,6 +28,10 @@ _build() {
 
 _pack() {
 	make DESTDIR="$WORKSPACE/_lib_" install
+}
+
+_aggregate() {
+	rsync --remove-source-files _lib_/ ../_lib_/ -av
 }
 
 _all() {
