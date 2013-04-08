@@ -1,0 +1,23 @@
+#! /bin/sh
+
+rm -rf out _lib_
+mkdir out
+
+( cd S && . "$B_SCRIPTS_D/git/reset" )
+cd out
+unset CFLAGS CXXFLAGS
+case "$CTARGET" in
+	i686-w64-mingw32)
+		VPX_TARGET=x86-win32-gcc
+	;;
+	x86_64-w64-mingw32)
+		VPX_TARGET=x86_64-win64-gcc
+	;;
+esac
+CROSS=$CTARGET- ../S/configure --target=$VPX_TARGET --prefix=/. \
+	--disable-shared --enable-static \
+	--disable-docs --disable-examples --disable-unit-tests \
+	--enable-runtime-cpu-detect
+make $M_JOBS V=1
+make DESTDIR="$WORKSPACE/_lib_" install
+sed -i -r -e 's:^(prefix=).*:\1:' ../_lib_/lib/pkgconfig/vpx.pc

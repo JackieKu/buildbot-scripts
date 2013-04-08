@@ -28,7 +28,9 @@ esac
 	--disable-doc \
 	--enable-runtime-cpudetect \
 	--enable-dxva2 \
-	--enable-libfreetype --enable-zlib --enable-gnutls --enable-libopus \
+	--enable-libfreetype --enable-zlib --enable-gnutls \
+	--enable-libopus \
+	--enable-libvpx \
 	--enable-debug \
 	$myconf
 [ -z "$is_mingw" ] || sed -i -r -e 's/(HAVE_NANOSLEEP) 1/\1 0/g' config.h
@@ -36,3 +38,5 @@ esac
 make $M_JOBS V=1
 make DESTDIR="$WORKSPACE/_lib_" install
 sed -i -r -e 's:^(prefix=)/.:\0:g' ../_lib_/lib/pkgconfig/*.pc
+
+. "$B_SCRIPTS_D/autoconf/run" aggregate
