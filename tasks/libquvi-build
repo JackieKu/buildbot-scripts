@@ -6,7 +6,8 @@ B_EXTRA_CONF="--without-manual"
 
 git apply "$B_SCRIPTS_D"/patches/libquvi/*.patch
 
-. "$B_SCRIPTS_D/autoconf/run" gen build pack
+WANT_AUTOMAKE=1.11 \
+. "$B_SCRIPTS_D/autoconf/run" gen build pack aggregate
 
 sed -i \
 	-e '/^Libs:/s/$/ -llua -lcurl -lcares -lws2_32 -lwldap32/' \
