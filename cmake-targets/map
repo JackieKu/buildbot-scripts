@@ -48,7 +48,7 @@ case "$T" in
 		_gmake
 	;;
 	qt*-msvc)
-		G="Visual Studio 11"
+		G="Visual Studio 11 Win64"
 	;;
 	vs2012*)
 		G="Visual Studio 11"
