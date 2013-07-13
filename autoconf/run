@@ -17,6 +17,7 @@ _configure() {
 
 _gen() {
 	if [ "$B_AUTORECONF" ] || ( [ ! -e configure ] && [ -e configure.ac -o -e configure.in ] ) ; then
+		touch README INSTALL
 		_autoreconf
 	fi
 	_configure
