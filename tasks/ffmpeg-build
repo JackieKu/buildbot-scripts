@@ -21,6 +21,12 @@ case "${label:=$LABEL}" in
 		[ -z "$B_CROSS_COMPILE" ] || myconf="$myconf --cross-prefix=$CTARGET- --target-os=mingw32 --arch=${CTARGET%%-*}"
 	;;
 esac
+_enable() {
+	local o
+	for o ; do
+		grep -qw "enable-$o" configure && echo "--enable-$o"
+	done
+}
 ./configure \
 	--pkg_config=pkg-config \
 	--prefix=/. \
@@ -28,7 +34,8 @@ esac
 	--disable-doc \
 	--enable-runtime-cpudetect \
 	--enable-dxva2 \
-	--enable-libfreetype --enable-zlib --enable-gnutls \
+	--enable-zlib --enable-gnutls \
+	--enable-libfreetype $(_enable fontconfig libass) \
 	--enable-libopus \
 	--enable-libvpx \
 	--enable-debug \
