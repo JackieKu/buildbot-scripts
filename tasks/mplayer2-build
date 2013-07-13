@@ -36,3 +36,4 @@ esac
 
 make $M_JOBS V=1
 $CTARGET-strip -o mplayer2.exe mplayer.exe
+. "$B_SCRIPTS_D/pack/7z" mplayer2.exe

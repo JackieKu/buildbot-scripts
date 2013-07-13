@@ -33,3 +33,4 @@ esac
 make $M_JOBS V=1
 mv mpv.exe mpv_debug.exe
 $CTARGET-strip -o mpv.exe mpv_debug.exe
+. "$B_SCRIPTS_D/pack/7z" mpv.exe

@@ -1,0 +1,7 @@
+#! /bin/sh
+
+if which 7z >/dev/null 2>&1 ; then
+	for i ; do
+		7z a -m0=lzma2 -sfx../../../../../../../..$B_SCRIPTS_D/data/7z.sfx "$i.7z.exe" "$i"
+	done
+fi
