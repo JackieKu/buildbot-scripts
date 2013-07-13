@@ -9,6 +9,9 @@ cd S
 sed -i \
 	-e 's:BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE:0x00000001:g' \
 	audio/out/ao_wasapi0.c
+sed -i \
+	-e 's:CONFIG_LIBASS:CONFIG_ASS:g' \
+	demux/demux.c
 
 unset CFLAGS CXXFLAGS
 [ "$BUILD_DEBUG" != true ] || export CFLAGS="-pipe -O0 -g"
