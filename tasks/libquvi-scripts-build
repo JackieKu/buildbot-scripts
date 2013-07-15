@@ -1,0 +1,9 @@
+#! /bin/sh
+
+. "$B_SCRIPTS_D/autoconf/run" init
+
+sed -i -e 's/^m=/m=1/' gen-ver.sh
+sed -i -e 's/test x"$A2X" = "xno"/false \&\& &/' configure.ac
+
+B_CONF="--prefix= --without-manual"
+. "$B_SCRIPTS_D/autoconf/run" gen build pack
