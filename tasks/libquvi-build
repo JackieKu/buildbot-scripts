@@ -4,7 +4,7 @@ B_EXTRA_CONF="--without-manual"
 
 . "$B_SCRIPTS_D/autoconf/run" init
 
-git apply "$B_SCRIPTS_D"/patches/libquvi/*.patch
+. "$B_SCRIPTS_D/patches/apply" libquvi
 
 WANT_AUTOMAKE=1.11 \
 . "$B_SCRIPTS_D/autoconf/run" gen build pack aggregate

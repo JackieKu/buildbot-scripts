@@ -1,0 +1,43 @@
+From bb8b3cc3cab8572c882e731d0202f5ac9fc77c92 Mon Sep 17 00:00:00 2001
+From: Kai-Chieh Ku <kjackie@gmail.com>
+Date: Mon, 15 Jul 2013 14:28:25 +0800
+Subject: [PATCH] VCD stream fix
+
+---
+ stream/vcd_read_win32.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/stream/vcd_read_win32.h b/stream/vcd_read_win32.h
+index 5957088..b27bc03 100644
+--- a/stream/vcd_read_win32.h
++++ b/stream/vcd_read_win32.h
+@@ -34,7 +34,7 @@ typedef struct mp_vcd_priv_st mp_vcd_priv_t;
+    we cache the information in mp_vcd_priv_st.
+ */
+ struct mp_vcd_priv_st {
+-    HANDLE hd;
++    int fd;
+     CDROM_TOC toc;
+     unsigned sect;
+     char buf[VCD_SECTOR_SIZE];
+@@ -128,7 +128,7 @@ static mp_vcd_priv_t* vcd_read_toc(int fd)
+ 	}
+     }
+ 
+-    vcd->hd = hd;
++    vcd->fd = fd;
+     return vcd;
+ }
+ 
+@@ -147,7 +147,7 @@ static int vcd_read(mp_vcd_priv_t* vcd, char *mem)
+     cdrom_raw.SectorCount = 1;
+     cdrom_raw.TrackMode = XAForm2;
+ 
+-    if (!DeviceIoControl(vcd->hd, IOCTL_CDROM_RAW_READ, &cdrom_raw,
++    if (!DeviceIoControl((HANDLE)_get_osfhandle(vcd->fd), IOCTL_CDROM_RAW_READ, &cdrom_raw,
+ 		sizeof(RAW_READ_INFO), vcd->buf, sizeof(vcd->buf),
+ 		&dwBytesReturned, NULL))
+ 	return 0;
+-- 
+1.8.1.5
+
