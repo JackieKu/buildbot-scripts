@@ -1,0 +1,11 @@
+#! /bin/sh
+
+. "$B_SCRIPTS_D/autoconf/run" init
+
+cat >gtk-doc.make <<_EOF_
+EXTRA_DIST =
+CLEANFILES =
+_EOF_
+
+B_EXTRA_CONF="--disable-modular-tests --with-threads=win32"
+. "$B_SCRIPTS_D/autoconf/run" gen build pack aggregate
