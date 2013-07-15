@@ -18,6 +18,7 @@ _configure() {
 _gen() {
 	if [ "$B_AUTORECONF" ] || ( [ ! -e configure ] && [ -e configure.ac -o -e configure.in ] ) ; then
 		touch README INSTALL
+		mkdir -p m4
 		_autoreconf
 	fi
 	_configure
