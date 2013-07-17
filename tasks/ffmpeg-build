@@ -32,8 +32,6 @@ _enable() {
 	--prefix=/. \
 	--enable-gpl --enable-nonfree \
 	--disable-doc \
-	--disable-encoders \
-	--disable-muxers \
 	--enable-runtime-cpudetect \
 	--enable-dxva2 \
 	--enable-zlib --enable-gnutls \
