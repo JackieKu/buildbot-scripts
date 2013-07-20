@@ -7,9 +7,6 @@ cd S
 . "$B_SCRIPTS_D/download/opengl-extension-headers"
 
 . "$B_SCRIPTS_D/patches/apply" mpv
-sed -i \
-	-e 's:BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE:0x00000001:g' \
-	audio/out/ao_wasapi0.c
 
 unset CFLAGS CXXFLAGS
 [ "$BUILD_DEBUG" != true ] || export CFLAGS="-pipe -O0 -g"
