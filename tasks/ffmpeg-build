@@ -36,6 +36,7 @@ _enable() {
 	--enable-dxva2 \
 	--enable-zlib --enable-gnutls \
 	--enable-libfreetype $(_enable fontconfig libass) \
+	$(_enable avresample) \
 	--enable-libopus \
 	--enable-libvpx \
 	--enable-debug \
