@@ -9,7 +9,7 @@ fi
 
 B_SYSTEM_NAME="`/bin/uname -s`"
 if [ "${B_SYSTEM_NAME#MINGW}" != "$B_SYSTEM_NAME" -a "${T%-cygwin}" != "$T" ] ; then
-	exec 'C:/cygwin/bin/sh.exe' -lxe "$0"
+	exec 'C:/cygwin64/bin/sh.exe' -lxe "$0"
 	exit 1
 elif [ "${B_SYSTEM_NAME#CYGWIN}" != "$B_SYSTEM_NAME" -a "${T%-msys}" != "$T" ] ; then
 	exec 'E:/software/_dev_/Git/bin/sh.exe' -lxe "$0"
