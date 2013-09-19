@@ -1,0 +1,11 @@
+#! /bin/sh
+
+B_EXTRA_CONF="--with-glib=no --with-icu=no --with-cairo=no"
+
+. "$B_SCRIPTS_D/autoconf/run" init
+
+rm -rf docs
+sed -i -e '/^SUBDIRS/s/ docs//g' Makefile.am
+sed -i -e '\:^docs/:d' configure.ac
+
+. "$B_SCRIPTS_D/autoconf/run" gen build pack
