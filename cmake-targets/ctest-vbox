@@ -1,5 +1,7 @@
 #! /bin/sh
 
+set -x
+
 _s() {
 	sed -r -e 's#/usr/local/lib(64)?/jenkins#T:#g' "$@"
 }
@@ -33,7 +35,8 @@ rm -rf $outdirs || true
 mkdir $outdirs
 chmod 777 $outdirs
 set +e
-sudo -n -u jackie "$D/vm-exec" Win8 cmd.exe /c "$F"
+#sudo -n -u jackie "$D/vm-exec" Win8 cmd.exe /c "$F"
+sh -x "$D/../bin/ssh" jackie@vbox-8go "cmd.exe /c '$F'"
 rv=$?
 chmod 755 $outdirs
 sudo -n "$D/cmake-targets/fix-tests-perms"
