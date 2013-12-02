@@ -1,0 +1,17 @@
+#! /bin/sh
+
+CPPFLAGS="$CPPFLAGS -Diconv_open=libiconv_open" \
+. "$B_SCRIPTS_D/autoconf/run" all aggregate
+
+cd "$WORKSPACE/_lib_/lib"
+
+cat >libass.def <<_EOF_
+LIBRARY libass
+EXPORTS
+_EOF_
+perl -ane '/(ass_[_[:alnum:]]+)\(/ && print "$1\n";' "$WORKSPACE/S/libass/ass.h" | sort -u >>libass.def
+
+$CC -shared -static-libgcc -o libass.dll -Wl,--out-implib,libass.dll.a libass.def \
+	libass.a libenca.a libfontconfig.a libexpat.a libfreetype.a libcharset.a libfribidi.a libharfbuzz.a libiconv.a
+mv libass.dll libass.debug.dll
+$CTARGET-strip -o libass.dll libass.debug.dll
