@@ -36,4 +36,6 @@ cat <<_EOF_
 M_JOBS=-j 8
 PKG_CONFIG=pkg-config
 PKG_CONFIG_LIBDIR=$REF/lib/pkgconfig
+ac_cv_func_malloc_0_nonnull=yes
+ac_cv_func_realloc_0_nonnull=yes
 _EOF_
