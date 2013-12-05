@@ -1,0 +1,27 @@
+From 371f0a18cfb13ceefa20ed718378135b90ecb394 Mon Sep 17 00:00:00 2001
+From: Kai-Chieh Ku <kjackie@gmail.com>
+Date: Mon, 2 Dec 2013 16:55:09 +0800
+Subject: [PATCH] don't include sys/wait.h on Win32
+
+---
+ mpvcore/player/command.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/mpvcore/player/command.c b/mpvcore/player/command.c
+index f6eb0b3..4ac3760 100644
+--- a/mpvcore/player/command.c
++++ b/mpvcore/player/command.c
+@@ -23,8 +23,10 @@
+ #include <stdbool.h>
+ #include <assert.h>
+ #include <time.h>
++#ifndef __MINGW32__
+ #include <sys/types.h>
+ #include <sys/wait.h>
++#endif
+ 
+ #include <libavutil/avstring.h>
+ #include <libavutil/common.h>
+-- 
+1.8.3.2
+

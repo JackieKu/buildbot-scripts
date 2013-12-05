@@ -31,6 +31,7 @@ Description: An Extensible Extension Language
 Version: ${BUILD_VERSION}
 
 Requires:
-Libs: -L\${libdir} -llua -lm
+Libs: -L\${libdir} -llua -lm -lcurl -liconv -lz
+Libs.private: -lcurl -liconv -lz
 Cflags: -I\${includedir}
 _EOF_

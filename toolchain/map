@@ -34,8 +34,14 @@ _cygwin() {
 _mingw_linux() {
 	e R_DEFAULT "$T"
 	e B_CROSS_COMPILE 1
-	e CRT_GLOB "/opt/$CTARGET/$CTARGET/lib/CRT_glob.o"
 	e SYSROOT "/opt/$CTARGET/$CTARGET"
+	_mingw
+}
+
+_mingw() {
+	e SYSLIB "$SYSROOT/lib"
+	e CRT_GLOB "$SYSLIB/CRT_glob.o"
+	e STATIC_WINPTHREAD "$SYSLIB/libwinpthread.a"
 }
 
 _export B_SYSTEM_NAME
@@ -68,7 +74,7 @@ case "$T" in
 		e SYSROOT "$tc_path/$CTARGET"
 		e PATH_OVERRIDE "$tc_path/bin:$PATH"
 		e PATH "$PATH_OVERRIDE"
-		e CRT_GLOB "$SYSROOT/lib/CRT_glob.o"
+		_mingw
 	;;
 	mingw-w32-cygwin)
 		_cygwin
@@ -82,7 +88,7 @@ case "$T" in
 		e SYSROOT "$tc_path/$CTARGET"
 		e PATH_OVERRIDE "$tc_path/bin:$tc_path/$CTARGET/bin:$PATH"
 		e PATH "$PATH_OVERRIDE"
-		e CRT_GLOB "$SYSROOT/lib/CRT_glob.o"
+		_mingw
 	;;
 esac
 
@@ -116,5 +122,6 @@ if [ "$CTARGET" ] ; then
 cat <<_EOF_
 CC=$CTARGET-gcc$exe
 CXX=$CTARGET-g++$exe
+WINDRES=$CTARGET-windres$exe
 _EOF_
 fi

@@ -13,19 +13,20 @@ unset CFLAGS CXXFLAGS
 myconf=
 case "$label" in
 	mingw*)
-		myconf="$myconf --disable-termcap --disable-termios --disable-lirc --disable-lircc"
+		myconf="$myconf --disable-terminfo --disable-termcap --disable-termios --disable-lirc --disable-lircc"
+		sed -i -r -e 's/if opts\[.execute.\] == True/if "execute" in opts and opts["execute"]/' waftools/checks/generic.py
 	;;
 esac
 
-./configure \
-	--enable-cross-compile --target=$CTARGET --pkg-config=pkg-config \
-	--prefix= \
+waf configure --prefix=/. \
 	--enable-static \
-	--disable-manpage \
-	--extra-libs-mpv="-L$REF/lib -ldvdcss" \
+	--enable-static-build \
+	--disable-manpage-build \
+	--disable-pdf-build \
 	$myconf
+waf build --verbose
 
-make $M_JOBS V=1
+cd build
 mv mpv.exe mpv_debug.exe
 $CTARGET-strip -o mpv.exe mpv_debug.exe
 . "$B_SCRIPTS_D/pack/7z" mpv.exe

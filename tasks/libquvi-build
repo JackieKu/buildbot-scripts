@@ -10,6 +10,6 @@ WANT_AUTOMAKE=1.11 \
 . "$B_SCRIPTS_D/autoconf/run" gen build pack aggregate
 
 sed -i \
-	-e '/^Libs:/s/$/ -llua -lcurl -lcares -lws2_32 -lwldap32/' \
+	-e '/^Libs:/s/$/ -llua -lcurl -lcares -liconv -lz -lws2_32 -lwldap32/' \
 	-e '/^Cflags:/s/$/ -DCARES_STATICLIB/' \
 	../_lib_/lib/pkgconfig/libquvi.pc
