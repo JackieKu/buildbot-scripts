@@ -38,7 +38,6 @@ _enable() {
 	--enable-libfreetype $(_enable fontconfig libass) \
 	$(_enable avresample) \
 	--enable-libopus \
-	--enable-libvpx \
 	--enable-debug \
 	$myconf
 [ -z "$is_mingw" ] || sed -i -r -e 's/(HAVE_NANOSLEEP) 1/\1 0/g' config.h
