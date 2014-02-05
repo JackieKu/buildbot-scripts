@@ -15,7 +15,7 @@ set_env_for_target();
 env_fixup();
 
 my $CMAKE = $ENV{CMAKE_EXECUTABLE} || 'cmake';
-my $CMAKE_BUILD_TYPE = $ENV{CMAKE_BUILD_TYPE} || $ENV{Configuration} || 'Release';
+my $CMAKE_BUILD_TYPE = $ENV{CMAKE_BUILD_TYPE} || $ENV{Configuration} || 'RelWithDebInfo';
 
 for my $_ (@ARGV) {
 	when ('gen') {

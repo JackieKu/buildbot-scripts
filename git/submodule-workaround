@@ -1,0 +1,11 @@
+#! /bin/sh
+# Git Plugin has bugs for updating submodules
+# https://issues.jenkins-ci.org/browse/JENKINS-21057
+
+#[ "$B_SYSTEM_NAME" = 'Linux' ] && exit 0
+
+git remote add origin "$GIT_URL" || true
+git fetch origin
+git reset --hard origin/master
+git checkout -t origin/master || true
+git submodule update --init

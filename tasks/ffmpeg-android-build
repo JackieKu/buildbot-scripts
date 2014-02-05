@@ -1,0 +1,64 @@
+#! /bin/bash
+
+NDK=/usr/local/lib/android-ndk
+: ${WORKSPACE:="$PWD"}
+
+build_one() {
+	./configure \
+		--prefix="$PREFIX" \
+		--disable-shared \
+		--enable-static \
+		--disable-doc \
+		--disable-ffmpeg \
+		--disable-ffplay \
+		--disable-ffprobe \
+		--disable-ffserver \
+		--disable-encoders \
+		--disable-muxers \
+		--disable-avdevice \
+		--disable-doc \
+		--disable-symver \
+		--enable-muxer=flv \
+		--cross-prefix="$CROSS_PREFIX" \
+		--target-os=linux \
+		--arch="${CTARGET%%-*}" \
+		--enable-cross-compile \
+		--sysroot="$SYSROOT" \
+		--extra-cflags="-Os -fpic -fdiagnostics-color=auto $EXTRA_CFLAGS" \
+		--extra-ldflags="$EXTRA_LDFLAGS" \
+		"$@"
+	#make clean
+	make -j12
+	make install
+}
+
+arch() {
+	ARCH="$1"
+	EXTRA_CFLAGS=
+	
+	case "$1" in
+		arm)
+			CTARGET=arm-linux-androideabi
+			EXTRA_CFLAGS="-marm"
+		;;
+		x86)
+			CTARGET=i686-linux-android
+		;;
+		*)
+			echo "Unsupported arch $ARCH"
+			exit 1
+		;;
+	esac
+
+	PREFIX="$WORKSPACE/dist/$ARCH"
+	SYSROOT="$NDK/platforms/android-9/arch-$ARCH"
+	TOOLCHAIN="$(echo "$NDK"/toolchains/$ARCH*-4.8/prebuilt/linux-x86*)"
+	CROSS_PREFIX="$TOOLCHAIN/bin/$CTARGET-"
+}
+
+arch "${label#android-}"
+
+cd S
+. "$B_SCRIPTS_D/git/reset"
+
+build_one

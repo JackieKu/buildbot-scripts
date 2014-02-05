@@ -1,3 +1,10 @@
 #! /bin/sh
 
+for i ; do
+	if [ "$i" = 'gen' ] ; then
+		[ ! -d .git ] || . "$B_SCRIPTS_D/git/reset"
+		break
+	fi
+done
+
 ${PERL:-perl} "$B_CMAKE_RUN.pl" "$@"

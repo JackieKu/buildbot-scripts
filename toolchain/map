@@ -10,7 +10,7 @@ e() {
 _export() {
 	local v
 	for v ; do
-		echo "$v='`eval echo "\\\$$v"`'"
+		echo "$v=`eval echo "\\\${$v}"`"
 	done
 }
 

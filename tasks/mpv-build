@@ -13,7 +13,7 @@ unset CFLAGS CXXFLAGS
 myconf=
 case "$label" in
 	mingw*)
-		myconf="$myconf --disable-terminfo --disable-termcap --disable-termios --disable-lirc --disable-lircc"
+		myconf="$myconf --disable-terminfo --disable-termcap --disable-termios --disable-lirc"
 		sed -i -r -e 's/if opts\[.execute.\] == True/if "execute" in opts and opts["execute"]/' waftools/checks/generic.py
 	;;
 esac
