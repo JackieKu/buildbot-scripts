@@ -1,7 +1,23 @@
 #! /bin/bash
 
 NDK=/usr/local/lib/android-ndk
-: ${WORKSPACE:="$PWD"}
+
+if [ "$WORKSPACE" ] && [ -d "$WORKSPACE" ] ; then
+	ON_BUILDBOT=1
+else
+	ON_BUILDBOT=
+	WORKSPACE="$PWD"
+fi
+
+all() {
+	a="$1"
+	shift
+	b="$1"
+	shift
+	for o ; do
+		echo "--$a-$b=$o"
+	done
+}
 
 build_one() {
 	./configure \
@@ -9,16 +25,14 @@ build_one() {
 		--disable-shared \
 		--enable-static \
 		--disable-doc \
-		--disable-ffmpeg \
-		--disable-ffplay \
-		--disable-ffprobe \
-		--disable-ffserver \
+		--disable-programs \
 		--disable-encoders \
 		--disable-muxers \
 		--disable-avdevice \
+		--disable-avfilter \
 		--disable-doc \
 		--disable-symver \
-		--enable-muxer=flv \
+		$(all enable muxer flv mp4 matroska) \
 		--cross-prefix="$CROSS_PREFIX" \
 		--target-os=linux \
 		--arch="${CTARGET%%-*}" \
@@ -26,8 +40,8 @@ build_one() {
 		--sysroot="$SYSROOT" \
 		--extra-cflags="-Os -fpic -fdiagnostics-color=auto $EXTRA_CFLAGS" \
 		--extra-ldflags="$EXTRA_LDFLAGS" \
-		"$@"
-	#make clean
+		$EXTRA_CONF "$@"
+	[ "$ON_BUILDBOT" ] || make clean
 	make -j12
 	make install
 }
@@ -35,6 +49,7 @@ build_one() {
 arch() {
 	ARCH="$1"
 	EXTRA_CFLAGS=
+	EXTRA_CONF=
 	
 	case "$1" in
 		arm)
@@ -43,6 +58,7 @@ arch() {
 		;;
 		x86)
 			CTARGET=i686-linux-android
+			EXTRA_CONF="--disable-amd3dnow --disable-amd3dnowext"
 		;;
 		*)
 			echo "Unsupported arch $ARCH"
@@ -56,9 +72,17 @@ arch() {
 	CROSS_PREFIX="$TOOLCHAIN/bin/$CTARGET-"
 }
 
-arch "${label#android-}"
 
-cd S
-. "$B_SCRIPTS_D/git/reset"
+if [ "$ON_BUILDBOT" ] ; then
+	arch "${label#android-}"
 
-build_one
+	cd S
+	. "$B_SCRIPTS_D/git/reset"
+
+	build_one
+else
+	set -e
+	for a in arm x86 ; do
+		( arch $a && build_one )
+	done
+fi
