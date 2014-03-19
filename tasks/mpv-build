@@ -8,15 +8,13 @@ cd S
 
 . "$B_SCRIPTS_D/patches/apply" mpv
 
-unset CFLAGS CXXFLAGS
-[ "$BUILD_DEBUG" != true ] || export CFLAGS="-pipe -O0 -g"
-myconf=
-case "$label" in
-	mingw*)
-		myconf="$myconf --disable-terminfo --disable-termcap --disable-termios --disable-lirc"
-		sed -i -r -e 's/if opts\[.execute.\] == True/if "execute" in opts and opts["execute"]/' waftools/checks/generic.py
-	;;
-esac
+CFLAGS=
+CXXFLAGS=
+[ "$BUILD_DEBUG" != true ] || CFLAGS="-pipe -O0 -g"
+
+myconf="$myconf --disable-terminfo --disable-termcap --disable-termios --disable-lirc"
+sed -i -r -e 's/if opts\[.execute.\] == True/if "execute" in opts and opts["execute"]/' waftools/checks/generic.py
+CPPFLAGS="$CPPFLAGS -U__STRICT_ANSI__"
 
 waf configure --prefix=/. \
 	--enable-static \
