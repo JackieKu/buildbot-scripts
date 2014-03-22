@@ -1,0 +1,17 @@
+#! /bin/sh
+
+rm -rf S/test
+mkdir S/test
+touch S/test/Makefile.am
+
+B_AUTORECONF=1 \
+B_EXTRA_CONF="--with-templatedir=/etc/fonts/conf.avail" \
+. "$B_SCRIPTS_D/autoconf/run"
+
+sed -i -e '/^Libs:/s/$/ -lexpat -lfreetype -lpng -lz/; /^Libs.private:/d' ../_lib_/lib/pkgconfig/fontconfig.pc
+
+cd ../_lib_/etc/fonts/conf.d
+for f in *.conf ; do
+	rm -f "$f"
+	cp ../conf.avail/"$f" .
+done

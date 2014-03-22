@@ -1,0 +1,23 @@
+#! /bin/sh
+
+#B_EXTRA_CONF="--without-png"
+B_EXTRA_CONF=
+[ "$WITH_HARFBUZZ" != true ] && B_EXTRA_CONF="$B_EXTRA_CONF --without-harfbuzz"
+
+. "$B_SCRIPTS_D/autoconf/run" all aggregate
+
+sed -i -r -e '/\.private:/d; /^Libs:/s/$/ -lpng -lz/' ../_lib_/lib/pkgconfig/freetype2.pc
+
+if [ "$WITH_HARFBUZZ" = true ] ; then
+	cd ../_lib_/lib
+	mkdir _tmp_
+	cd _tmp_
+	$CTARGET-ar x ../libfreetype.a
+	$CTARGET-ar x ../libharfbuzz.a
+	rm -f ../libfreetype.a ../libharfbuzz.a
+	$CTARGET-ar crs ../libfreetype.a *
+	cd ..
+	rm -rf _tmp_
+	ln -s libfreetype.a libharfbuzz.a
+	sed -i -r -e 's/-lharfbuzz/-lfreetype/g' pkgconfig/harfbuzz.pc
+fi

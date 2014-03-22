@@ -4,8 +4,9 @@ B_EXTRA_CONF="--with-glib=no --with-icu=no --with-cairo=no"
 
 . "$B_SCRIPTS_D/autoconf/run" init
 
-rm -rf docs
-sed -i -e '/^SUBDIRS/s/ docs//g' Makefile.am
-sed -i -e '\:^docs/:d' configure.ac
+rm -rf test docs _lib_/include/harfbuzz _lib_/lib/libharfbuzz.a
+sed -i -e '/^SUBDIRS/s/ test docs//g;' Makefile.am
+sed -i -e '/test/d' src/Makefile.am
+sed -i -r -e '\:^(test|docs)/:d' configure.ac
 
 . "$B_SCRIPTS_D/autoconf/run" gen build pack

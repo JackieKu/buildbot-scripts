@@ -12,6 +12,6 @@ _EOF_
 perl -ane '/(ass_[_[:alnum:]]+)\(/ && print "$1\n";' "$WORKSPACE/S/libass/ass.h" | sort -u >>libass.def
 
 $CC -shared -static-libgcc -o libass.dll -Wl,--out-implib,libass.dll.a libass.def \
-	libass.a libenca.a libfontconfig.a libexpat.a libfreetype.a libcharset.a libfribidi.a libharfbuzz.a libiconv.a
+	libass.a libenca.a libfontconfig.a libexpat.a libfreetype.a libcharset.a libfribidi.a libharfbuzz.a libiconv.a libpng.a libz.a
 mv libass.dll libass.debug.dll
 $CTARGET-strip -o libass.dll libass.debug.dll
