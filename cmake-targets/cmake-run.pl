@@ -6,6 +6,7 @@ use FindBin;
 use lib "$FindBin::Bin/../perl";
 
 use Buildbot;
+use File::Spec::Functions qw(catdir);
 use autouse 'Text::ParseWords' => qw(shellwords);
 
 (-d 'build') || mkdir 'build';
@@ -13,6 +14,10 @@ chdir('build') || die "$?: $!";
 
 set_env_for_target();
 env_fixup();
+$ENV{CMAKE_PREFIX_PATH} = path_var(
+	catdir($ENV{WORKSPACE}, 'S', '_lib_'), 
+	catdir($ENV{B_SCRIPT_D}, 'cmake-targets')
+);
 
 my $CMAKE = $ENV{CMAKE_EXECUTABLE} || 'cmake';
 my $CMAKE_BUILD_TYPE = $ENV{CMAKE_BUILD_TYPE} || $ENV{Configuration} || 'RelWithDebInfo';

@@ -4,7 +4,7 @@ use common::sense;
 
 use Exporter 'import';
 our %EXPORT_TAGS = (
-	env => [qw(cmd_env cmd_env_profiles set_env_for_target env_fixup)],
+	env => [qw(path_var cmd_env cmd_env_profiles set_env_for_target env_fixup)],
 	run => [qw(run run0 runS)],
 	var => [qw($T $KUUTILS_DIR)],
 );
@@ -20,6 +20,12 @@ our $T = $ENV{label};
 sub D
 {
 	print STDERR ">> @_\n";
+}
+
+my $PATHS_C = $^O eq 'MSWin32' ? ';' : ':';
+sub path_var
+{
+	join($PATHS_C, @_);
 }
 
 # Get the environment variables set by batch file
@@ -69,7 +75,7 @@ sub env_fixup
 	import File::Spec;
 	# Exclude the directories contain a shell
 	#D($ENV{PATH});
-	$ENV{PATH} = join(';', grep {!($_ eq '.' || m:GnuWin32|Sysinternals|[/\\]_media_[/\\]|perl[/\\]c[/\\]bin:i || -e "$_/sh.exe" || -e "$_/bash.exe")} File::Spec->path());
+	$ENV{PATH} = join_paths(grep {!($_ eq '.' || m:GnuWin32|Sysinternals|[/\\]_media_[/\\]|perl[/\\]c[/\\]bin:i || -e "$_/sh.exe" || -e "$_/bash.exe")} File::Spec->path());
 	#D($ENV{PATH});
 }
 
