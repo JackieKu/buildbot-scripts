@@ -39,6 +39,6 @@ set +e
 sh -x "$D/../bin/ssh" jackie@vbox-8go "cmd.exe /c '$F'"
 rv=$?
 chmod 755 $outdirs
-sudo -n "$D/cmake-targets/fix-tests-perms"
+sudo -n "$D/cmake/fix-tests-perms"
 
 exit $rv

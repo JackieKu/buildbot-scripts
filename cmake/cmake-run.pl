@@ -16,7 +16,7 @@ set_env_for_target();
 env_fixup();
 $ENV{CMAKE_PREFIX_PATH} = path_var(
 	catdir($ENV{WORKSPACE}, 'S', '_lib_'), 
-	catdir($ENV{B_SCRIPT_D}, 'cmake-targets')
+	catdir($ENV{B_SCRIPT_D}, 'cmake')
 );
 
 my $CMAKE = $ENV{CMAKE_EXECUTABLE} || 'cmake';
