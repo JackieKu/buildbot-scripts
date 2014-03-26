@@ -15,3 +15,5 @@ $CC -shared -static-libgcc -o libass.dll -Wl,--out-implib,libass.dll.a libass.de
 	libass.a libenca.a libfontconfig.a libexpat.a libfreetype.a libcharset.a libfribidi.a libharfbuzz.a libiconv.a libpng.a libz.a
 mv libass.dll libass.debug.dll
 $CTARGET-strip -o libass.dll libass.debug.dll
+mkdir "$WORKSPACE/_lib_/libass_DLL"
+mv *.dll *.dll.a *.def "$WORKSPACE/_lib_/libass_DLL"
