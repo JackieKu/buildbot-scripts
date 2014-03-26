@@ -2,11 +2,13 @@
 
 . "$B_SCRIPTS_D/tarball/get" http://zlib.net/zlib-$BUILD_VERSION.tar.gz
 
-cd S
+. "$B_CMAKE_RUN" init
+
 sed -i -r 's:share/pkgconfig:lib/pkgconfig:g' CMakeLists.txt
-CMAKE_OPTS="-DCMAKE_INSTALL_PREFIX=" . "$B_CMAKE_RUN" gen build
-sed -i -r 's:^exec_prefix=:\0${prefix}/bin:g; s:^(libdir|sharedlibdir|includedir)=:\1=${prefix}:' build/zlib.pc
-make -C build DESTDIR="$WORKSPACE/_lib_" install
+
+CMAKE_OPTS="-DCMAKE_INSTALL_PREFIX=" . "$B_CMAKE_RUN" gen build install
+
+sed -i -r 's:^exec_prefix=:\0${prefix}/bin:g; s:^(libdir|sharedlibdir|includedir)=:\1=${prefix}:' ../_lib_/lib/pkgconfig/zlib.pc
 
 # Avoid usage of the DLL
 cd "$WORKSPACE/_lib_/lib"

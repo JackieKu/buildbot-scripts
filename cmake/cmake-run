@@ -1,10 +1,37 @@
 #! /bin/sh
 
-for i ; do
-	if [ "$i" = 'gen' ] ; then
-		[ ! -d .git ] || . "$B_SCRIPTS_D/git/reset"
-		break
-	fi
-done
+. "$B_SCRIPTS_D/common"
 
-${PERL:-perl} "$B_CMAKE_RUN.pl" "$@"
+_install() {
+	make -C build DESTDIR="$WORKSPACE/_lib_" install
+}
+
+_all() {
+	_init
+	cmake_actions="gen build"
+	do_cmake_run
+	_install
+}
+
+do_cmake_run() {
+	if [ "$cmake_actions" ] ; then
+		${PERL:-perl} "${B_CMAKE_RUN}.pl" $cmake_actions
+		cmake_actions=
+	fi
+}
+
+[ $# -gt 0 ] || set -- all
+
+cmake_actions=
+for action ; do
+	case "$action" in
+		gen|build|pack|test)
+			cmake_actions="$cmake_actions $action"
+		;;
+		*)
+			do_cmake_run
+			_$action
+		;;
+	esac
+done
+do_cmake_run

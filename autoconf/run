@@ -1,11 +1,6 @@
 #! /bin/sh
 
-_init() {
-	rm -rf _lib_
-
-	cd S
-	[ ! -d .git ] || . "$B_SCRIPTS_D/git/reset"
-}
+. "$B_SCRIPTS_D/common"
 
 _autoreconf() {
 	autoreconf -if
@@ -30,10 +25,6 @@ _build() {
 
 _pack() {
 	make DESTDIR="$WORKSPACE/_lib_" install
-}
-
-_aggregate() {
-	rsync --remove-source-files _lib_/ ../_lib_/ -av
 }
 
 _all() {
