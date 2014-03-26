@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 
 NDK=/usr/local/lib/android-ndk
 
@@ -19,20 +19,84 @@ all() {
 	done
 }
 
-build_one() {
+has() {
+	a="$1"
+	shift
+	case " $* " in
+		*" $a "*) return 0 ;;
+	esac
+	return 1
+}
+
+select_components() {
+
+AUDIO_DECODERS="aac aac_latm ac3 eac3 dca vorbis"
+VIDEO_DECODERS="rawvideo mpeg4 hevc vc1 vp8 vp9"
+#SUBTITLE_DECODERS="ass srt sami webvtt"
+SUBTITLE_DECODERS=
+for c in `./configure --list-decoders` ; do
+	case "$c" in
+		mp[123]*|pcm_*)
+			AUDIO_DECODERS="$AUDIO_DECODERS $c"
+		;;
+		h26*|mpeg*video|msmpeg4*)
+			VIDEO_DECODERS="$VIDEO_DECODERS $c"
+		;;
+	esac
+done
+DECODERS="$AUDIO_DECODERS $VIDEO_DECODERS $SUBTITLE_DECODERS"
+
+DEMUXERS="m4v matroska avi asf ogg"
+for c in `./configure --list-demuxers` ; do
+	case "$c" in
+		pcm_*|mpeg*)
+			DEMUXERS="$DEMUXERS $c"
+		;;
+		*)
+			has "$c" $DECODERS && DEMUXERS="$DEMUXERS $c"
+		;;
+	esac
+done
+
+# flv muxer is pulled in to enable certain avc bits
+MUXERS="flv mp4 matroska"
+
+PARSERS=
+for c in `./configure --list-parsers` ; do
+	case "$c" in
+		pcm_*|mpeg*)
+			PARSERS="$PARSERS $c"
+		;;
+		*)
+			has "$c" $DECODERS && PARSERS="$PARSERS $c"
+		;;
+	esac
+done
+
+PROTOCOLS="file"
+
+BSFS="h264_mp4toannexb"
+
+}
+
+config() {
 	./configure \
 		--prefix="$PREFIX" \
 		--disable-shared \
 		--enable-static \
 		--disable-doc \
 		--disable-programs \
-		--disable-encoders \
-		--disable-muxers \
+		--disable-everything \
 		--disable-avdevice \
 		--disable-avfilter \
 		--disable-doc \
 		--disable-symver \
-		$(all enable muxer flv mp4 matroska) \
+		$(all enable decoder $DECODERS) \
+		$(all enable demuxer $DEMUXERS) \
+		$(all enable muxer $MUXERS) \
+		$(all enable parser $PARSERS) \
+		$(all enable protocol $PROTOCOLS) \
+		$(all enable bsf $BSFS) \
 		--cross-prefix="$CROSS_PREFIX" \
 		--target-os=linux \
 		--arch="${CTARGET%%-*}" \
@@ -41,6 +105,10 @@ build_one() {
 		--extra-cflags="-Os -fpic -fdiagnostics-color=auto $EXTRA_CFLAGS" \
 		--extra-ldflags="$EXTRA_LDFLAGS" \
 		$EXTRA_CONF "$@"
+}
+
+build_one() {
+	config
 	[ "$ON_BUILDBOT" ] || make clean
 	make -j12
 	make install
@@ -79,9 +147,11 @@ if [ "$ON_BUILDBOT" ] ; then
 	cd S
 	. "$B_SCRIPTS_D/git/reset"
 
+	select_components
 	build_one
 else
 	set -e
+	select_components
 	for a in arm x86 ; do
 		( arch $a && build_one )
 	done
