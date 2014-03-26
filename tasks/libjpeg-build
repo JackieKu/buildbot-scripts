@@ -1,0 +1,20 @@
+#! /bin/sh
+
+. "$B_SCRIPTS_D/tarball/get" http://downloads.sourceforge.net/project/libjpeg-turbo/libjpeg-turbo/$BUILD_VERSION/libjpeg-turbo-$BUILD_VERSION.tar.gz
+
+sed_expr='s/(INST_DIR )(\$\{CMAKE_INSTALL_PREFIX\})/\1"\2"/g;'
+# CMP0022 requires CMake 2.8.12
+if ! cmake --help-policy CMP0022 >/dev/null 2>&1 ; then
+	sed_expr="$sed_expr /CMP0022/d;"
+fi
+sed -i -r -e "$sed_expr" S/CMakeLists.txt
+
+CMAKE_OPTS="-DCMAKE_INSTALL_PREFIX=" \
+. "$B_CMAKE_RUN" all
+
+cd ../_lib_/lib
+mkdir dll.a
+mv *.dll.a dll.a
+# libturbojpeg.a is a super set of libjpeg.a
+rm -f libjpeg.a
+ln -s libturbojpeg.a libjpeg.a
