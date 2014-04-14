@@ -1,6 +1,10 @@
 #! /bin/sh
 
-NDK=/usr/local/lib/android-ndk
+: ${NDK:=/usr/local/lib/android-ndk}
+if ! [ -e "$NDK/ndk-build" ] ; then
+	echo 'Error: Cannot locate NDK at $NDK.'
+	exit 1
+fi
 
 if [ "$WORKSPACE" ] && [ -d "$WORKSPACE" ] ; then
 	ON_BUILDBOT=1
@@ -30,7 +34,7 @@ has() {
 
 select_components() {
 
-AUDIO_DECODERS="aac aac_latm ac3 eac3 dca vorbis"
+AUDIO_DECODERS="aac aac_latm ac3 eac3 dca flac vorbis"
 VIDEO_DECODERS="rawvideo mpeg4 hevc vc1 vp8 vp9"
 #SUBTITLE_DECODERS="ass srt sami webvtt"
 SUBTITLE_DECODERS=
@@ -46,7 +50,7 @@ for c in `./configure --list-decoders` ; do
 done
 DECODERS="$AUDIO_DECODERS $VIDEO_DECODERS $SUBTITLE_DECODERS"
 
-DEMUXERS="m4v matroska avi asf ogg"
+DEMUXERS="m4v mov matroska avi asf ogg"
 for c in `./configure --list-demuxers` ; do
 	case "$c" in
 		pcm_*|mpeg*)
