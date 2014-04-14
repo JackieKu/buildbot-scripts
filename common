@@ -3,7 +3,7 @@
 _init() {
 	rm -rf _lib_
 
-	cd S
+	[ ! -d S ] || cd S
 	[ ! -d .git ] || . "$B_SCRIPTS_D/git/reset"
 }
 

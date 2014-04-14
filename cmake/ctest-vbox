@@ -13,7 +13,7 @@ _S() {
 set -e
 
 D="/usr/local/lib/jenkins/helpers"
-f="$WORKSPACE/build/run-tests.cmd"
+f="$PWD/run-tests.cmd"
 F="`echo -n "$f" | _S`"
 
 (
